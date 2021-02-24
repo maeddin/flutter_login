@@ -15,18 +15,15 @@ class Auth with ChangeNotifier {
     this.onLogin,
     this.onSignup,
     this.onRecoverPassword,
-    String email = '',
-    String password = '',
-    String confirmPassword = '',
-  })  : this._email = email,
-        this._password = password,
-        this._confirmPassword = confirmPassword;
+    this.values,
+  });
 
   final AuthCallback onLogin;
   final AuthCallback onSignup;
   final RecoverCallback onRecoverPassword;
 
   AuthMode _mode = AuthMode.Login;
+  List<InputData> values;
 
   AuthMode get mode => _mode;
   set mode(AuthMode value) {
@@ -53,22 +50,19 @@ class Auth with ChangeNotifier {
 
   String _email = '';
   get email => _email;
+
   set email(String email) {
     _email = email;
     notifyListeners();
   }
+}
 
-  String _password = '';
-  get password => _password;
-  set password(String password) {
-    _password = password;
-    notifyListeners();
-  }
+class InputData with ChangeNotifier{
 
-  String _confirmPassword = '';
-  get confirmPassword => _confirmPassword;
-  set confirmPassword(String confirmPassword) {
-    _confirmPassword = confirmPassword;
-    notifyListeners();
-  }
+  InputData(this._value);
+
+  String _value;
+
+  String get value => _value;
+  set value(v) {_value = v; notifyListeners();}
 }

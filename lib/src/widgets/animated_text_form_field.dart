@@ -42,7 +42,7 @@ class AnimatedTextFormField extends StatefulWidget {
     this.focusNode,
     this.validator,
     this.onFieldSubmitted,
-    this.onSaved,
+    this.onSaved, this.onChanged,
   })  : assert((inertiaController == null && inertiaDirection == null) ||
             (inertiaController != null && inertiaDirection != null)),
         super(key: key);
@@ -60,6 +60,7 @@ class AnimatedTextFormField extends StatefulWidget {
   final bool obscureText;
   final TextEditingController controller;
   final FocusNode focusNode;
+  final Function(String) onChanged;
   final FormFieldValidator<String> validator;
   final ValueChanged<String> onFieldSubmitted;
   final FormFieldSetter<String> onSaved;
@@ -214,6 +215,7 @@ class _AnimatedTextFormFieldState extends State<AnimatedTextFormField> {
       onSaved: widget.onSaved,
       validator: widget.validator,
       enabled: widget.enabled,
+      onChanged: widget.onChanged,
     );
 
     if (widget.loadingController != null) {
@@ -261,7 +263,7 @@ class AnimatedPasswordTextFormField extends StatefulWidget {
     this.focusNode,
     this.validator,
     this.onFieldSubmitted,
-    this.onSaved,
+    this.onSaved, this.prefixIcon = const Icon(FontAwesomeIcons.lock, size: 20), this.hide = false, this.onChanged,
   })  : assert((inertiaController == null && inertiaDirection == null) ||
             (inertiaController != null && inertiaDirection != null)),
         super(key: key);
@@ -278,8 +280,11 @@ class AnimatedPasswordTextFormField extends StatefulWidget {
   final FocusNode focusNode;
   final FormFieldValidator<String> validator;
   final ValueChanged<String> onFieldSubmitted;
+  final Function(String) onChanged;
   final FormFieldSetter<String> onSaved;
   final TextFieldInertiaDirection inertiaDirection;
+  final Icon prefixIcon;
+  final bool hide;
 
   @override
   _AnimatedPasswordTextFormFieldState createState() =>
@@ -291,6 +296,13 @@ class _AnimatedPasswordTextFormFieldState
   var _obscureText = true;
 
   @override
+  void initState() {
+    super.initState();
+
+    _obscureText = widget.hide;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AnimatedTextFormField(
       interval: widget.interval,
@@ -299,8 +311,8 @@ class _AnimatedPasswordTextFormFieldState
       width: widget.animatedWidth,
       enabled: widget.enabled,
       labelText: widget.labelText,
-      prefixIcon: Icon(FontAwesomeIcons.lock, size: 20),
-      suffixIcon: GestureDetector(
+      prefixIcon: widget.prefixIcon,
+      suffixIcon: !widget.hide?null:GestureDetector(
         onTap: () => setState(() => _obscureText = !_obscureText),
         dragStartBehavior: DragStartBehavior.down,
         child: AnimatedCrossFade(
@@ -338,6 +350,7 @@ class _AnimatedPasswordTextFormFieldState
       onFieldSubmitted: widget.onFieldSubmitted,
       onSaved: widget.onSaved,
       inertiaDirection: widget.inertiaDirection,
+      onChanged: widget.onChanged,
     );
   }
 }

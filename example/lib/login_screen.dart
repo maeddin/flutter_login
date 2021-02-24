@@ -13,10 +13,10 @@ class LoginScreen extends StatelessWidget {
 
   Future<String> _loginUser(LoginData data) {
     return Future.delayed(loginTime).then((_) {
-      if (!mockUsers.containsKey(data.name)) {
+      if (!mockUsers.containsKey(data.values[0])) {
         return 'Username not exists';
       }
-      if (mockUsers[data.name] != data.password) {
+      if (mockUsers[data.values[1]] != data.values[2]) {
         return 'Password does not match';
       }
       return null;
@@ -44,6 +44,9 @@ class LoginScreen extends StatelessWidget {
       logo: 'assets/images/ecorp.png',
       logoTag: Constants.logoTag,
       titleTag: Constants.titleTag,
+      messages: LoginMessages(
+        fieldData: [FieldData('Email', validator: (s, l)=>s.contains('a')?"hi":null, icon: Icon(Icons.account_circle, size: 25,)), FieldData('Password', hide: true), FieldData('Confirm Password', mode: Mode.REGISTER, hide: true)]
+      ),
       // messages: LoginMessages(
       //   usernameHint: 'Username',
       //   passwordHint: 'Pass',
@@ -140,22 +143,16 @@ class LoginScreen extends StatelessWidget {
         }
         return null;
       },
-      passwordValidator: (value) {
-        if (value.isEmpty) {
-          return 'Password is empty';
-        }
-        return null;
-      },
       onLogin: (loginData) {
         print('Login info');
-        print('Name: ${loginData.name}');
-        print('Password: ${loginData.password}');
+        print('Name: ${loginData.values[0]}');
+        print('Password: ${loginData.values[1]}');
         return _loginUser(loginData);
       },
       onSignup: (loginData) {
         print('Signup info');
-        print('Name: ${loginData.name}');
-        print('Password: ${loginData.password}');
+        print('Name: ${loginData.values[0]}');
+        print('Password: ${loginData.values[1]}');
         return _loginUser(loginData);
       },
       onSubmitAnimationCompleted: () {

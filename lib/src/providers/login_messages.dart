@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class LoginMessages with ChangeNotifier {
   LoginMessages({
-    this.usernameHint: defaultUsernameHint,
-    this.passwordHint: defaultPasswordHint,
-    this.confirmPasswordHint: defaultConfirmPasswordHint,
+    this.fieldData = const [
+      FieldData('Email', mode: Mode.LOGIN),
+      FieldData('Password', mode: Mode.LOGIN),
+      FieldData('Confirm Password', mode: Mode.REGISTER)
+    ],
+    this.recoveryData = const FieldData('Email', icon: Icon(Icons.account_circle, size: 25,)),
     this.forgotPasswordButton: defaultForgotPasswordButton,
     this.loginButton: defaultLoginButton,
     this.signupButton: defaultSignupButton,
@@ -24,20 +28,12 @@ class LoginMessages with ChangeNotifier {
   static const defaultSignupButton = 'SIGNUP';
   static const defaultRecoverPasswordButton = 'RECOVER';
   static const defaultRecoverPasswordIntro = 'Reset your password here';
-  static const defaultRecoverPasswordDescription =
-      'We will send your plain-text password to this email account.';
+  static const defaultRecoverPasswordDescription = 'We will send your plain-text password to this email account.';
   static const defaultGoBackButton = 'BACK';
   static const defaultConfirmPasswordError = 'Password do not match!';
   static const defaultRecoverPasswordSuccess = 'An email has been sent';
 
-  /// Hint text of the user name [TextField]
-  final String usernameHint;
-
-  /// Hint text of the password [TextField]
-  final String passwordHint;
-
-  /// Hint text of the confirm password [TextField]
-  final String confirmPasswordHint;
+  final List<FieldData> fieldData;
 
   /// Forgot password button's label
   final String forgotPasswordButton;
@@ -67,4 +63,19 @@ class LoginMessages with ChangeNotifier {
 
   /// The success message to show after submitting recover password
   final String recoverPasswordSuccess;
+
+  final FieldData recoveryData;
 }
+
+class FieldData {
+  final String label;
+  final Mode mode;
+  final String Function(String, List<String>) validator;
+  final Icon icon;
+  final bool hide;
+  final TextInputType inputType;
+
+  const FieldData(this.label, {this.inputType, this.icon = const Icon(FontAwesomeIcons.lock, size: 20), this.hide = false, this.mode = Mode.LOGIN, this.validator});
+}
+
+enum Mode { LOGIN, REGISTER }
