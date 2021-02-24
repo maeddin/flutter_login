@@ -481,14 +481,14 @@ void main() {
     await simulateOpenSoftKeyboard(tester, loginBuilder());
     await tester.enterText(findNameTextField(), 'invalid-name');
     await tester.pumpAndSettle();
-    await tester.enterText(findPasswordTextField(), user.values[1]);
+    await tester.enterText(findPasswordTextField(), user.data[1]);
     await tester.pumpAndSettle();
     clickSubmitButton();
     await tester.pumpAndSettle();
 
     verifyInOrder([
       mockCallback.emailValidator('invalid-name'),
-      mockCallback.passwordValidator(user.values[1]),
+      mockCallback.passwordValidator(user.data[1]),
     ]);
     verifyNever(mockCallback.onLogin(any));
     verifyNever(mockCallback.onSubmitAnimationCompleted());
@@ -497,16 +497,16 @@ void main() {
 
     // fail at onLogin
     await simulateOpenSoftKeyboard(tester, loginBuilder());
-    await tester.enterText(findNameTextField(), invalidUser.values[0]);
+    await tester.enterText(findNameTextField(), invalidUser.data[0]);
     await tester.pumpAndSettle();
-    await tester.enterText(findPasswordTextField(), invalidUser.values[1]);
+    await tester.enterText(findPasswordTextField(), invalidUser.data[1]);
     await tester.pumpAndSettle();
     clickSubmitButton();
     await tester.pumpAndSettle();
 
     verifyInOrder([
-      mockCallback.emailValidator(invalidUser.values[0]),
-      mockCallback.passwordValidator(invalidUser.values[1]),
+      mockCallback.emailValidator(invalidUser.data[0]),
+      mockCallback.passwordValidator(invalidUser.data[1]),
       mockCallback.onLogin(any),
     ]);
     verifyNever(mockCallback.onSubmitAnimationCompleted());
@@ -515,16 +515,16 @@ void main() {
 
     // pass
     await simulateOpenSoftKeyboard(tester, loginBuilder());
-    await tester.enterText(findNameTextField(), user.values[0]);
+    await tester.enterText(findNameTextField(), user.data[0]);
     await tester.pumpAndSettle();
-    await tester.enterText(findPasswordTextField(), user.values[1]);
+    await tester.enterText(findPasswordTextField(), user.data[1]);
     await tester.pumpAndSettle();
     clickSubmitButton();
     await tester.pumpAndSettle();
 
     verifyInOrder([
-      mockCallback.emailValidator(user.values[0]),
-      mockCallback.passwordValidator(user.values[1]),
+      mockCallback.emailValidator(user.data[0]),
+      mockCallback.passwordValidator(user.data[1]),
       mockCallback.onLogin(any),
       mockCallback.onSubmitAnimationCompleted(),
     ]);
@@ -556,17 +556,17 @@ void main() {
 
     // fail at validating - confirm password not match
     await simulateOpenSoftKeyboard(tester, loginBuilder());
-    await tester.enterText(findNameTextField(), user.values[0]);
+    await tester.enterText(findNameTextField(), user.data[0]);
     await tester.pumpAndSettle();
-    await tester.enterText(findPasswordTextField(), user.values[1]);
+    await tester.enterText(findPasswordTextField(), user.data[1]);
     await tester.pumpAndSettle();
     await tester.enterText(findConfirmPasswordTextField(), 'not-match');
     await tester.pumpAndSettle();
     clickSubmitButton();
     await tester.pumpAndSettle();
 
-    verifyNever(mockCallback.emailValidator(invalidUser.values[0]));
-    verifyNever(mockCallback.passwordValidator(invalidUser.values[1]));
+    verifyNever(mockCallback.emailValidator(invalidUser.data[0]));
+    verifyNever(mockCallback.passwordValidator(invalidUser.data[1]));
     verifyNever(mockCallback.onSignup(any));
     verifyNever(mockCallback.onSubmitAnimationCompleted());
 
@@ -576,16 +576,16 @@ void main() {
     await simulateOpenSoftKeyboard(tester, loginBuilder());
     await tester.enterText(findNameTextField(), 'invalid-name');
     await tester.pumpAndSettle();
-    await tester.enterText(findPasswordTextField(), user.values[1]);
+    await tester.enterText(findPasswordTextField(), user.data[1]);
     await tester.pumpAndSettle();
-    await tester.enterText(findConfirmPasswordTextField(), user.values[1]);
+    await tester.enterText(findConfirmPasswordTextField(), user.data[1]);
     await tester.pumpAndSettle();
     clickSubmitButton();
     await tester.pumpAndSettle();
 
     verifyInOrder([
       mockCallback.emailValidator('invalid-name'),
-      mockCallback.passwordValidator(user.values[1]),
+      mockCallback.passwordValidator(user.data[1]),
     ]);
     verifyNever(mockCallback.onSignup(any));
     verifyNever(mockCallback.onSubmitAnimationCompleted());
@@ -594,19 +594,19 @@ void main() {
 
     // fail at onSignup
     await simulateOpenSoftKeyboard(tester, loginBuilder());
-    await tester.enterText(findNameTextField(), invalidUser.values[0]);
+    await tester.enterText(findNameTextField(), invalidUser.data[0]);
     await tester.pumpAndSettle();
-    await tester.enterText(findPasswordTextField(), invalidUser.values[1]);
+    await tester.enterText(findPasswordTextField(), invalidUser.data[1]);
     await tester.pumpAndSettle();
     await tester.enterText(
-        findConfirmPasswordTextField(), invalidUser.values[1]);
+        findConfirmPasswordTextField(), invalidUser.data[1]);
     await tester.pumpAndSettle();
     clickSubmitButton();
     await tester.pumpAndSettle();
 
     verifyInOrder([
-      mockCallback.emailValidator(invalidUser.values[0]),
-      mockCallback.passwordValidator(invalidUser.values[1]),
+      mockCallback.emailValidator(invalidUser.data[0]),
+      mockCallback.passwordValidator(invalidUser.data[1]),
       mockCallback.onSignup(any),
     ]);
     verifyNever(mockCallback.onSubmitAnimationCompleted());
@@ -615,18 +615,18 @@ void main() {
 
     // pass
     await simulateOpenSoftKeyboard(tester, loginBuilder());
-    await tester.enterText(findNameTextField(), user.values[0]);
+    await tester.enterText(findNameTextField(), user.data[0]);
     await tester.pumpAndSettle();
-    await tester.enterText(findPasswordTextField(), user.values[1]);
+    await tester.enterText(findPasswordTextField(), user.data[1]);
     await tester.pumpAndSettle();
-    await tester.enterText(findConfirmPasswordTextField(), user.values[1]);
+    await tester.enterText(findConfirmPasswordTextField(), user.data[1]);
     await tester.pumpAndSettle();
     clickSubmitButton();
     await tester.pumpAndSettle();
 
     verifyInOrder([
-      mockCallback.emailValidator(user.values[0]),
-      mockCallback.passwordValidator(user.values[1]),
+      mockCallback.emailValidator(user.data[0]),
+      mockCallback.passwordValidator(user.data[1]),
       mockCallback.onSignup(any),
       mockCallback.onSubmitAnimationCompleted(),
     ]);

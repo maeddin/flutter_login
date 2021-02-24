@@ -13,10 +13,10 @@ class LoginScreen extends StatelessWidget {
 
   Future<String> _loginUser(LoginData data) {
     return Future.delayed(loginTime).then((_) {
-      if (!mockUsers.containsKey(data.values[0])) {
+      if (!mockUsers.containsKey(data.data[0])) {
         return 'Username not exists';
       }
-      if (mockUsers[data.values[1]] != data.values[2]) {
+      if (mockUsers[data.data[1]] != data.data[2]) {
         return 'Password does not match';
       }
       return null;
@@ -145,14 +145,14 @@ class LoginScreen extends StatelessWidget {
       },
       onLogin: (loginData) {
         print('Login info');
-        print('Name: ${loginData.values[0]}');
-        print('Password: ${loginData.values[1]}');
+        print('Name: ${loginData.data[0]}');
+        print('Password: ${loginData.data[1]}');
         return _loginUser(loginData);
       },
       onSignup: (loginData) {
         print('Signup info');
-        print('Name: ${loginData.values[0]}');
-        print('Password: ${loginData.values[1]}');
+        print('Name: ${loginData.data[0]}');
+        print('Password: ${loginData.data[1]}');
         return _loginUser(loginData);
       },
       onSubmitAnimationCompleted: () {

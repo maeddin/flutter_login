@@ -352,7 +352,7 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
     final messages = Provider.of<LoginMessages>(context, listen: false);
     final auth = Provider.of<Auth>(context, listen: false);
     auth.values = messages.fieldData.map((e) => InputData('')).toList();
-        _loadingController = widget.loadingController ??
+    _loadingController = widget.loadingController ??
         (AnimationController(
           vsync: this,
           duration: Duration(milliseconds: 1150),
@@ -433,9 +433,9 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
     String error;
 
     if (auth.isLogin) {
-      error = await auth.onLogin(LoginData(values: auth.values.map((e) => e.value).toList()));
+      error = await auth.onLogin(LoginData(auth.values.map((e) => e.value).toList()));
     } else {
-      error = await auth.onSignup(LoginData(values: auth.values.map((e) => e.value).toList()));
+      error = await auth.onSignup(LoginData(auth.values.map((e) => e.value).toList()));
     }
 
     // workaround to run after _cardSizeAnimation in parent finished
@@ -650,7 +650,8 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
       key: _formKey,
       child: Column(
         children: <Widget>[Container(height: cardPadding + 10)] +
-            quiver.zip([messages.fieldData, auth.values])
+            quiver
+                .zip([messages.fieldData, auth.values])
                 .map((e) => getFieldDataContainer(
                       isLogin,
                       cardPadding,
@@ -767,7 +768,7 @@ class _RecoverCardState extends State<_RecoverCard> with SingleTickerProviderSta
       keyboardType: data.inputType,
       textInputAction: TextInputAction.done,
       onFieldSubmitted: (value) => _submit(),
-      validator: (s)=>data.validator?.call(s,[s]),
+      validator: (s) => data.validator?.call(s, [s]),
       onSaved: (value) => auth.email = value,
     );
   }
@@ -805,41 +806,50 @@ class _RecoverCardState extends State<_RecoverCard> with SingleTickerProviderSta
     const cardPadding = 16.0;
     final textFieldWidth = cardWidth - cardPadding * 2;
 
-    return FittedBox(
-      // width: cardWidth,
-      child: Card(
-        child: Container(
-          padding: const EdgeInsets.only(
-            left: cardPadding,
-            top: cardPadding + 10.0,
-            right: cardPadding,
-            bottom: cardPadding,
-          ),
-          width: cardWidth,
-          alignment: Alignment.center,
-          child: Form(
-            key: _formRecoverKey,
-            child: Column(
-              children: [
-                Text(
-                  messages.recoverPasswordIntro,
-                  key: kRecoverPasswordIntroKey,
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.body1,
-                ),
-                SizedBox(height: 20),
-                _buildRecoverNameField(textFieldWidth, messages, auth),
-                SizedBox(height: 20),
-                Text(
-                  messages.recoverPasswordDescription,
-                  key: kRecoverPasswordDescriptionKey,
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.body1,
-                ),
-                SizedBox(height: 26),
-                _buildRecoverButton(theme, messages),
-                _buildBackButton(theme, messages),
-              ],
+    return WillPopScope(
+      onWillPop: () async {
+        if(!_isSubmitting){
+                _formRecoverKey.currentState.save();
+                widget.onSwitchLogin();
+        }
+        return false;
+      },
+      child: FittedBox(
+        // width: cardWidth,
+        child: Card(
+          child: Container(
+            padding: const EdgeInsets.only(
+              left: cardPadding,
+              top: cardPadding + 10.0,
+              right: cardPadding,
+              bottom: cardPadding,
+            ),
+            width: cardWidth,
+            alignment: Alignment.center,
+            child: Form(
+              key: _formRecoverKey,
+              child: Column(
+                children: [
+                  Text(
+                    messages.recoverPasswordIntro,
+                    key: kRecoverPasswordIntroKey,
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.body1,
+                  ),
+                  SizedBox(height: 20),
+                  _buildRecoverNameField(textFieldWidth, messages, auth),
+                  SizedBox(height: 20),
+                  Text(
+                    messages.recoverPasswordDescription,
+                    key: kRecoverPasswordDescriptionKey,
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.body1,
+                  ),
+                  SizedBox(height: 26),
+                  _buildRecoverButton(theme, messages),
+                  _buildBackButton(theme, messages),
+                ],
+              ),
             ),
           ),
         ),

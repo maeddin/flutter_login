@@ -2,18 +2,16 @@ import 'package:flutter/foundation.dart';
 import 'package:quiver/core.dart';
 
 class LoginData {
-  final List<String> values;
+  final List<String> data;
 
-  LoginData({
-    this.values,
-  });
+  LoginData(this.data);
 
   bool operator ==(Object other) {
     if (other is LoginData) {
-      return values == other.values;
+      return data == other.data;
     }
     return false;
   }
 
-  int get hashCode => values.hashCode;
+  int get hashCode => data.hashCode;
 }
