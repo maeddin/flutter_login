@@ -67,7 +67,8 @@ class _ExpandableContainerState extends State<ExpandableContainer> {
     ))
       ..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
-          widget?.onExpandCompleted();
+          widget.onExpandCompleted();
+          setState(() {});
         }
       });
   }
@@ -78,7 +79,7 @@ class _ExpandableContainerState extends State<ExpandableContainer> {
       sizeFactor: _sizeAnimation,
       child: Stack(
         children: <Widget>[
-          Positioned.fill(
+          if(!_controller.isCompleted) Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(color: widget.backgroundColor),
             ),

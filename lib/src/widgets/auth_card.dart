@@ -455,7 +455,7 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
     _submitController.reverse();
 
     if (!DartHelper.isNullOrEmpty(error)) {
-      (widget.onFailed??showErrorToast).call(context, error);
+      (widget.onFailed ?? showErrorToast).call(context, error);
       Future.delayed(const Duration(milliseconds: 271), () {
         setState(() => _showShadow = true);
       });
@@ -484,13 +484,13 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildFieldData(double width, FieldData data, Auth auth, InputData inputData, {bool submitOnDone = false}) {
+  Widget _buildFieldData(double width, FieldData data, Auth auth, InputData inputData, {bool submitOnDone = false, FocusNode focusNode, FocusNode nextFocusNode}) {
     return AnimatedPasswordTextFormField(
       animatedWidth: width,
       loadingController: _loadingController,
       interval: _passTextFieldLoadingAnimationInterval,
       labelText: data.label,
-      textInputAction: auth.isLogin ? TextInputAction.done : TextInputAction.next,
+      textInputAction: submitOnDone ? TextInputAction.done : TextInputAction.next,
       //focusNode: _passwordFocusNode,
       /*onFieldSubmitted: (value) {if (auth.isLogin) {
           _submit();
@@ -502,7 +502,8 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
       prefixIcon: data.icon,
       validator: (s) => data.validator?.call(s, auth.values.map((e) => e.value).toList()),
       onChanged: (value) => inputData.value = value,
-      onFieldSubmitted: submitOnDone?(s)=>_submit():null,
+      onFieldSubmitted: submitOnDone ? (s) => _submit() : focusNode?.nextFocus(),
+      focusNode: focusNode,
     );
   }
 
@@ -611,12 +612,14 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
     FieldData fieldData,
     InputData inputData,
     Auth auth, {
-      bool isLast = false,
+    bool isLast = false,
     EdgeInsetsGeometry padding = const EdgeInsets.only(
       left: 10,
       right: 10,
       top: 10,
     ),
+    FocusNode focusNode,
+    FocusNode nextFocusNode,
   }) {
     ThemeData theme = Theme.of(context);
     return fieldData.mode == Mode.LOGIN
@@ -626,7 +629,7 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                _buildFieldData(textFieldWidth, fieldData, auth, inputData, submitOnDone: isLast),
+                _buildFieldData(textFieldWidth, fieldData, auth, inputData, submitOnDone: isLast, focusNode: focusNode, nextFocusNode: nextFocusNode),
               ],
             ),
           )
@@ -642,7 +645,7 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
               vertical: cardPadding / 2,
             ),
             onExpandCompleted: () => _postSwitchAuthController.forward(),
-            child: _buildFieldData(textFieldWidth, fieldData, auth, inputData, submitOnDone: isLast),
+            child: _buildFieldData(textFieldWidth, fieldData, auth, inputData, submitOnDone: isLast, focusNode: focusNode, nextFocusNode: nextFocusNode),
           );
   }
 
@@ -658,27 +661,35 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
     final textFieldWidth = cardWidth - cardPadding * 2;
     final int lastLoginField = messages.fieldData.lastIndexWhere((element) => element.mode == Mode.LOGIN);
     final int length = messages.fieldData.length;
+    final List<FocusNode> focusNodes = messages.fieldData.map((data) => FocusNode(skipTraversal: data.mode == Mode.LOGIN || !auth.isLogin)).toList();
+    final List iterable = quiver.zip([
+      messages.fieldData,
+      auth.values,
+      focusNodes,
+      List.generate(length, (index) => index),
+    ]).toList();
     final authForm = Form(
       key: _formKey,
       child: Column(
         children: <Widget>[Container(height: cardPadding + 10)] +
-            quiver
-                .zip([messages.fieldData, auth.values, List.generate(length, (index) => isLogin?(index == lastLoginField):(index == length - 1))])
-                .map((e) => getFieldDataContainer(
-                      isLogin,
-                      cardPadding,
-                      cardWidth,
-                      textFieldWidth,
-                      e[0],
-                      e[1],
-                      auth,
-                      isLast: e[2],
-                      padding: EdgeInsets.symmetric(
-                        horizontal: cardPadding,
-                        vertical: cardPadding / 2,
-                      ),
-                    ))
-                .toList() +
+            iterable.map((e) {
+              int index = e[3];
+              bool isLast = isLogin ? (index == lastLoginField) : (index == length - 1);
+              return getFieldDataContainer(
+                isLogin,
+                cardPadding,
+                cardWidth,
+                textFieldWidth,
+                e[0],
+                e[1],
+                auth,
+                isLast: isLast,
+                padding: EdgeInsets.symmetric(
+                  horizontal: cardPadding,
+                  vertical: cardPadding / 2,
+                ),
+              );
+            }).toList() +
             [
               Container(
                 padding: Paddings.fromRBL(cardPadding),
