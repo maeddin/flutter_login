@@ -502,7 +502,7 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
       prefixIcon: data.icon,
       validator: (s) => data.validator?.call(s, auth.values.map((e) => e.value).toList()),
       onChanged: (value) => inputData.value = value,
-      onFieldSubmitted: submitOnDone ? (s) => _submit() : focusNode?.nextFocus(),
+      onFieldSubmitted: submitOnDone ? (s) => _submit() : (s) => nextFocusNode.requestFocus(),
       focusNode: focusNode,
     );
   }
@@ -661,7 +661,7 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
     final textFieldWidth = cardWidth - cardPadding * 2;
     final int lastLoginField = messages.fieldData.lastIndexWhere((element) => element.mode == Mode.LOGIN);
     final int length = messages.fieldData.length;
-    final List<FocusNode> focusNodes = messages.fieldData.map((data) => FocusNode(skipTraversal: data.mode == Mode.LOGIN || !auth.isLogin)).toList();
+    final List<FocusNode> focusNodes = messages.fieldData.map((data) => FocusNode(skipTraversal: data.mode != Mode.LOGIN && auth.isLogin)).toList();
     final List iterable = quiver.zip([
       messages.fieldData,
       auth.values,
@@ -688,6 +688,7 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
                   horizontal: cardPadding,
                   vertical: cardPadding / 2,
                 ),
+                focusNode: e[2],
                 nextFocusNode: isLast
                     ? null
                     : (auth.isLogin
