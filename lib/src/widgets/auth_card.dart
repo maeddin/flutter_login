@@ -688,6 +688,7 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
                   horizontal: cardPadding,
                   vertical: cardPadding / 2,
                 ),
+                focusNode: e[2],
               );
             }).toList() +
             [
