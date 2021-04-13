@@ -674,7 +674,7 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
         children: <Widget>[Container(height: cardPadding + 10)] +
             iterable.map((e) {
               int index = e[3];
-              bool isLast = isLogin ? (index == lastLoginField) : (index == length - 1);
+              bool isLast = isLogin ? (index >= lastLoginField) : (index == length - 1);
               return getFieldDataContainer(
                 isLogin,
                 cardPadding,
@@ -688,7 +688,11 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
                   horizontal: cardPadding,
                   vertical: cardPadding / 2,
                 ),
-                focusNode: e[2],
+                nextFocusNode: isLast
+                    ? null
+                    : (auth.isLogin
+                        ? iterable.skip(index + 1).firstWhere((element) => element[0].mode == Mode.LOGIN, orElse: () => null)?.elementAt(2)
+                        : focusNodes[index + 1]),
               );
             }).toList() +
             [
