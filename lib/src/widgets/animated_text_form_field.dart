@@ -44,7 +44,7 @@ class AnimatedTextFormField extends StatefulWidget {
     this.validator,
     this.onFieldSubmitted,
     this.onSaved,
-    this.onChanged,
+    this.onChanged, this.autofillHints,
   })  : assert((inertiaController == null && inertiaDirection == null) || (inertiaController != null && inertiaDirection != null)),
         super(key: key);
 
@@ -66,6 +66,7 @@ class AnimatedTextFormField extends StatefulWidget {
   final ValueChanged<String> onFieldSubmitted;
   final FormFieldSetter<String> onSaved;
   final TextFieldInertiaDirection inertiaDirection;
+  final Iterable<String> autofillHints;
 
   @override
   _AnimatedTextFormFieldState createState() => _AnimatedTextFormFieldState();
@@ -211,6 +212,7 @@ class _AnimatedTextFormFieldState extends State<AnimatedTextFormField> {
       validator: widget.validator,
       enabled: widget.enabled,
       onChanged: widget.onChanged,
+      autofillHints: widget.autofillHints,
     );
 
     if (widget.loadingController != null) {
@@ -259,6 +261,7 @@ class AnimatedPasswordTextFormField extends StatefulWidget {
     this.validator,
     this.onFieldSubmitted,
     this.onSaved,
+    this.autofillHints,
     this.prefixIcon = const Icon(FontAwesomeIcons.lock, size: 20),
     this.hide = false,
     this.onChanged,
@@ -282,6 +285,7 @@ class AnimatedPasswordTextFormField extends StatefulWidget {
   final TextFieldInertiaDirection inertiaDirection;
   final Icon prefixIcon;
   final bool hide;
+  final Iterable<String> autofillHints;
 
   @override
   _AnimatedPasswordTextFormFieldState createState() => _AnimatedPasswordTextFormFieldState();
@@ -349,6 +353,7 @@ class _AnimatedPasswordTextFormFieldState extends State<AnimatedPasswordTextForm
       onSaved: widget.onSaved,
       inertiaDirection: widget.inertiaDirection,
       onChanged: widget.onChanged,
+      autofillHints: widget.autofillHints,
     );
   }
 }

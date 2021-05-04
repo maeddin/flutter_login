@@ -402,8 +402,6 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    super.dispose();
-
     _loadingController?.removeStatusListener(handleLoadingAnimationStatus);
     _passwordFocusNode.dispose();
     _confirmPasswordFocusNode.dispose();
@@ -411,6 +409,8 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
     _switchAuthController.dispose();
     _postSwitchAuthController.dispose();
     _submitController.dispose();
+
+    super.dispose();
   }
 
   void _switchAuthMode() {
@@ -428,7 +428,7 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
     // a hack to force unfocus the soft keyboard. If not, after change-route
     // animation completes, it will trigger rebuilding this widget and show all
     // textfields and buttons again before going to new route
-    FocusScope.of(context).requestFocus(FocusNode());
+    FocusScope.of(context).unfocus();
 
     if (!_formKey.currentState.validate()) {
       return false;
@@ -446,9 +446,11 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
       error = await auth.onSignup(LoginData(auth.values.map((e) => e.value).toList()));
     }
 
+    if(!mounted) return true;
+
     // workaround to run after _cardSizeAnimation in parent finished
     // need a cleaner way but currently it works so..
-    Future.delayed(const Duration(milliseconds: 270), () {
+    Future.delayed(const Duration(milliseconds: 450), () {
       setState(() => _showShadow = false);
     });
 
@@ -491,6 +493,7 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
       interval: _passTextFieldLoadingAnimationInterval,
       labelText: data.label,
       textInputAction: submitOnDone ? TextInputAction.done : TextInputAction.next,
+      autofillHints: data.autofillHints,
       //focusNode: _passwordFocusNode,
       /*onFieldSubmitted: (value) {if (auth.isLogin) {
           _submit();
@@ -671,32 +674,33 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
     final authForm = Form(
       key: _formKey,
       child: Column(
-        children: <Widget>[Container(height: cardPadding + 10)] +
-            iterable.map((e) {
-              int index = e[3];
-              bool isLast = isLogin ? (index >= lastLoginField) : (index == length - 1);
-              return getFieldDataContainer(
-                isLogin,
-                cardPadding,
-                cardWidth,
-                textFieldWidth,
-                e[0],
-                e[1],
-                auth,
-                isLast: isLast,
-                padding: EdgeInsets.symmetric(
-                  horizontal: cardPadding,
-                  vertical: cardPadding / 2,
-                ),
-                focusNode: e[2],
-                nextFocusNode: isLast
-                    ? null
-                    : (auth.isLogin
+        children: <Widget>[Container(height: cardPadding + 10),
+              AutofillGroup(
+                child: Column(children: iterable.map((e) {
+                  int index = e[3];
+                  bool isLast = isLogin ? (index >= lastLoginField) : (index == length - 1);
+                  return getFieldDataContainer(
+                    isLogin,
+                    cardPadding,
+                    cardWidth,
+                    textFieldWidth,
+                    e[0],
+                    e[1],
+                    auth,
+                    isLast: isLast,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: cardPadding,
+                      vertical: cardPadding / 2,
+                    ),
+                    focusNode: e[2],
+                    nextFocusNode: isLast
+                        ? null
+                        : (auth.isLogin
                         ? iterable.skip(index + 1).firstWhere((element) => element[0].mode == Mode.LOGIN, orElse: () => null)?.elementAt(2)
                         : focusNodes[index + 1]),
-              );
-            }).toList() +
-            [
+                  );
+                }).toList(),),
+              ),
               Container(
                 padding: Paddings.fromRBL(cardPadding),
                 width: cardWidth,

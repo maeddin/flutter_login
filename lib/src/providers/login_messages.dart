@@ -3,12 +3,12 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class LoginMessages with ChangeNotifier {
   LoginMessages({
-    this.fieldData = const [
-      FieldData('Email', mode: Mode.LOGIN),
-      FieldData('Password', mode: Mode.LOGIN),
-      FieldData('Confirm Password', mode: Mode.REGISTER)
-    ],
-    this.recoveryData = const FieldData('Email', icon: Icon(Icons.account_circle, size: 25,)),
+    this.fieldData = const [FieldData('Email', mode: Mode.LOGIN), FieldData('Password', mode: Mode.LOGIN), FieldData('Confirm Password', mode: Mode.REGISTER)],
+    this.recoveryData = const FieldData('Email',
+        icon: Icon(
+          Icons.account_circle,
+          size: 25,
+        )),
     this.forgotPasswordButton: defaultForgotPasswordButton,
     this.loginButton: defaultLoginButton,
     this.signupButton: defaultSignupButton,
@@ -74,8 +74,10 @@ class FieldData {
   final Icon icon;
   final bool hide;
   final TextInputType inputType;
+  final Iterable<String> autofillHints;
 
-  const FieldData(this.label, {this.inputType, this.icon = const Icon(FontAwesomeIcons.lock, size: 20), this.hide = false, this.mode = Mode.LOGIN, this.validator});
+  const FieldData(this.label,
+      {this.inputType, this.icon = const Icon(FontAwesomeIcons.lock, size: 20), this.hide = false, this.mode = Mode.LOGIN, this.validator, this.autofillHints});
 }
 
 enum Mode { LOGIN, REGISTER }

@@ -330,10 +330,10 @@ class _FlutterLoginState extends State<FlutterLogin> with TickerProviderStateMix
 
   @override
   void dispose() {
-    super.dispose();
     _loadingController.dispose();
     _logoController.dispose();
     _titleController.dispose();
+    super.dispose();
   }
 
   void _reverseHeaderAnimation() {
