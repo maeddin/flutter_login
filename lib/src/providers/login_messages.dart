@@ -70,11 +70,11 @@ class LoginMessages with ChangeNotifier {
 class FieldData {
   final String label;
   final Mode mode;
-  final String Function(String, List<String>) validator;
+  final String Function(String, List<String>)? validator;
   final Icon icon;
   final bool hide;
-  final TextInputType inputType;
-  final Iterable<String> autofillHints;
+  final TextInputType? inputType;
+  final Iterable<String>? autofillHints;
 
   const FieldData(this.label,
       {this.inputType, this.icon = const Icon(FontAwesomeIcons.lock, size: 20), this.hide = false, this.mode = Mode.LOGIN, this.validator, this.autofillHints});

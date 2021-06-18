@@ -26,9 +26,9 @@ Interval _getInternalInterval(
 
 class AnimatedTextFormField extends StatefulWidget {
   AnimatedTextFormField({
-    Key key,
+    Key? key,
     this.interval = const Interval(0.0, 1.0),
-    @required this.width,
+    required this.width,
     this.loadingController,
     this.inertiaController,
     this.inertiaDirection,
@@ -48,38 +48,38 @@ class AnimatedTextFormField extends StatefulWidget {
   })  : assert((inertiaController == null && inertiaDirection == null) || (inertiaController != null && inertiaDirection != null)),
         super(key: key);
 
-  final Interval interval;
-  final AnimationController loadingController;
-  final AnimationController inertiaController;
+  final Interval? interval;
+  final AnimationController? loadingController;
+  final AnimationController? inertiaController;
   final double width;
   final bool enabled;
-  final String labelText;
-  final Widget prefixIcon;
-  final Widget suffixIcon;
-  final TextInputType keyboardType;
-  final TextInputAction textInputAction;
+  final String? labelText;
+  final Widget? prefixIcon;
+  final Widget? suffixIcon;
+  final TextInputType? keyboardType;
+  final TextInputAction? textInputAction;
   final bool obscureText;
-  final TextEditingController controller;
-  final FocusNode focusNode;
-  final Function(String) onChanged;
-  final FormFieldValidator<String> validator;
-  final ValueChanged<String> onFieldSubmitted;
-  final FormFieldSetter<String> onSaved;
-  final TextFieldInertiaDirection inertiaDirection;
-  final Iterable<String> autofillHints;
+  final TextEditingController? controller;
+  final FocusNode? focusNode;
+  final Function(String)? onChanged;
+  final FormFieldValidator<String>? validator;
+  final ValueChanged<String>? onFieldSubmitted;
+  final FormFieldSetter<String>? onSaved;
+  final TextFieldInertiaDirection? inertiaDirection;
+  final Iterable<String>? autofillHints;
 
   @override
   _AnimatedTextFormFieldState createState() => _AnimatedTextFormFieldState();
 }
 
 class _AnimatedTextFormFieldState extends State<AnimatedTextFormField> {
-  Animation<double> scaleAnimation;
-  Animation<double> sizeAnimation;
-  Animation<double> suffixIconOpacityAnimation;
+  late Animation<double> scaleAnimation;
+  late Animation<double> sizeAnimation;
+  late Animation<double> suffixIconOpacityAnimation;
 
-  Animation<double> fieldTranslateAnimation;
-  Animation<double> iconRotationAnimation;
-  Animation<double> iconTranslateAnimation;
+  late Animation<double> fieldTranslateAnimation;
+  late Animation<double> iconRotationAnimation;
+  late Animation<double> iconTranslateAnimation;
 
   @override
   void initState() {
@@ -96,7 +96,7 @@ class _AnimatedTextFormFieldState extends State<AnimatedTextFormField> {
         end: 1.0,
       ).animate(CurvedAnimation(
         parent: loadingController,
-        curve: _getInternalInterval(0, .2, interval.begin, interval.end, Curves.easeOutBack),
+        curve: _getInternalInterval(0, .2, interval!.begin, interval.end, Curves.easeOutBack),
       ));
       suffixIconOpacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
         parent: loadingController,
@@ -132,8 +132,8 @@ class _AnimatedTextFormFieldState extends State<AnimatedTextFormField> {
   }
 
   void _updateSizeAnimation() {
-    final interval = widget.interval;
-    final loadingController = widget.loadingController;
+    final interval = widget.interval!;
+    final loadingController = widget.loadingController!;
 
     sizeAnimation = Tween<double>(
       begin: 48.0,
@@ -166,7 +166,7 @@ class _AnimatedTextFormFieldState extends State<AnimatedTextFormField> {
     }
   }
 
-  Widget _buildInertiaAnimation(Widget child) {
+  Widget? _buildInertiaAnimation(Widget? child) {
     if (widget.inertiaController == null) {
       return child;
     }
@@ -246,9 +246,9 @@ class _AnimatedTextFormFieldState extends State<AnimatedTextFormField> {
 
 class AnimatedPasswordTextFormField extends StatefulWidget {
   AnimatedPasswordTextFormField({
-    Key key,
+    Key? key,
     this.interval = const Interval(0.0, 1.0),
-    @required this.animatedWidth,
+    required this.animatedWidth,
     this.loadingController,
     this.inertiaController,
     this.inertiaDirection,
@@ -268,24 +268,24 @@ class AnimatedPasswordTextFormField extends StatefulWidget {
   })  : assert((inertiaController == null && inertiaDirection == null) || (inertiaController != null && inertiaDirection != null)),
         super(key: key);
 
-  final Interval interval;
-  final AnimationController loadingController;
-  final AnimationController inertiaController;
+  final Interval? interval;
+  final AnimationController? loadingController;
+  final AnimationController? inertiaController;
   final double animatedWidth;
   final bool enabled;
-  final String labelText;
-  final TextInputType keyboardType;
-  final TextInputAction textInputAction;
-  final TextEditingController controller;
-  final FocusNode focusNode;
-  final FormFieldValidator<String> validator;
-  final ValueChanged<String> onFieldSubmitted;
-  final Function(String) onChanged;
-  final FormFieldSetter<String> onSaved;
-  final TextFieldInertiaDirection inertiaDirection;
+  final String? labelText;
+  final TextInputType? keyboardType;
+  final TextInputAction? textInputAction;
+  final TextEditingController? controller;
+  final FocusNode? focusNode;
+  final FormFieldValidator<String>? validator;
+  final ValueChanged<String>? onFieldSubmitted;
+  final Function(String)? onChanged;
+  final FormFieldSetter<String>? onSaved;
+  final TextFieldInertiaDirection? inertiaDirection;
   final Icon prefixIcon;
   final bool hide;
-  final Iterable<String> autofillHints;
+  final Iterable<String>? autofillHints;
 
   @override
   _AnimatedPasswordTextFormFieldState createState() => _AnimatedPasswordTextFormFieldState();

@@ -5,10 +5,10 @@ import '../models/login_data.dart';
 enum AuthMode { Signup, Login }
 
 /// The result is an error message, callback successes if message is null
-typedef AuthCallback = Future<String> Function(LoginData);
+typedef AuthCallback = Future<String>? Function(LoginData);
 
 /// The result is an error message, callback successes if message is null
-typedef RecoverCallback = Future<String> Function(String);
+typedef RecoverCallback = Future<String>? Function(String);
 
 class Auth with ChangeNotifier {
   Auth({
@@ -18,12 +18,12 @@ class Auth with ChangeNotifier {
     this.values,
   });
 
-  final AuthCallback onLogin;
-  final AuthCallback onSignup;
-  final RecoverCallback onRecoverPassword;
+  final AuthCallback? onLogin;
+  final AuthCallback? onSignup;
+  final RecoverCallback? onRecoverPassword;
 
   AuthMode _mode = AuthMode.Login;
-  List<InputData> values;
+  List<InputData>? values;
 
   AuthMode get mode => _mode;
   set mode(AuthMode value) {
@@ -49,7 +49,7 @@ class Auth with ChangeNotifier {
   }
 
   String _email = '';
-  get email => _email;
+  String get email => _email;
 
   set email(String email) {
     _email = email;
