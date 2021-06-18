@@ -9,7 +9,7 @@ class GradientBox extends StatelessWidget {
 
   final AlignmentGeometry begin;
   final AlignmentGeometry end;
-  final List<Color> colors;
+  final List<Color>? colors;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class GradientBox extends StatelessWidget {
       child: SizedBox.expand(),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: colors,
+          colors: colors!,
           begin: begin,
           end: end,
           stops: [0, 1],

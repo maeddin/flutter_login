@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'utils.dart';
+
 import '../lib/src/constants.dart';
 import '../lib/src/widgets/animated_text.dart';
+import 'utils.dart';
 
 void main() {
-  final TestWidgetsFlutterBinding binding =
-      TestWidgetsFlutterBinding.ensureInitialized();
+  final TestWidgetsFlutterBinding binding = TestWidgetsFlutterBinding.ensureInitialized() as TestWidgetsFlutterBinding;
 
   void setScreenSize(Size size) {
     binding.window.physicalSizeTestValue = size;
@@ -19,8 +19,7 @@ void main() {
     binding.window.clearPhysicalSizeTestValue();
   }
 
-  testWidgets('Default email validator throws error if not match email regex',
-      (WidgetTester tester) async {
+  testWidgets('Default email validator throws error if not match email regex', (WidgetTester tester) async {
     await tester.pumpWidget(defaultFlutterLogin());
 
     // wait for loading animation to finish
@@ -34,7 +33,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // TODO: put error messages into variables
-    expect(nameTextFieldWidget(tester).decoration.errorText, 'Invalid email!');
+    expect(nameTextFieldWidget(tester).decoration!.errorText, 'Invalid email!');
 
     // missing '@'
     await simulateOpenSoftKeyboard(tester, defaultFlutterLogin());
@@ -43,7 +42,7 @@ void main() {
     clickSubmitButton();
     await tester.pumpAndSettle();
 
-    expect(nameTextFieldWidget(tester).decoration.errorText, 'Invalid email!');
+    expect(nameTextFieldWidget(tester).decoration!.errorText, 'Invalid email!');
 
     // missing the part before '@'
     await simulateOpenSoftKeyboard(tester, defaultFlutterLogin());
@@ -52,7 +51,7 @@ void main() {
     clickSubmitButton();
     await tester.pumpAndSettle();
 
-    expect(nameTextFieldWidget(tester).decoration.errorText, 'Invalid email!');
+    expect(nameTextFieldWidget(tester).decoration!.errorText, 'Invalid email!');
 
     // missing the part after '@'
     await simulateOpenSoftKeyboard(tester, defaultFlutterLogin());
@@ -61,7 +60,7 @@ void main() {
     clickSubmitButton();
     await tester.pumpAndSettle();
 
-    expect(nameTextFieldWidget(tester).decoration.errorText, 'Invalid email!');
+    expect(nameTextFieldWidget(tester).decoration!.errorText, 'Invalid email!');
 
     // missing domain extension (.com, .org...)
     await simulateOpenSoftKeyboard(tester, defaultFlutterLogin());
@@ -70,7 +69,7 @@ void main() {
     clickSubmitButton();
     await tester.pumpAndSettle();
 
-    expect(nameTextFieldWidget(tester).decoration.errorText, 'Invalid email!');
+    expect(nameTextFieldWidget(tester).decoration!.errorText, 'Invalid email!');
 
     // valid email based on default validator
     await simulateOpenSoftKeyboard(tester, defaultFlutterLogin());
@@ -79,11 +78,10 @@ void main() {
     clickSubmitButton();
     await tester.pumpAndSettle();
 
-    expect(nameTextFieldWidget(tester).decoration.errorText, null);
+    expect(nameTextFieldWidget(tester).decoration!.errorText, null);
   });
 
-  testWidgets(
-      'Default password validator throws error if password is less than 3 characters',
+  testWidgets('Default password validator throws error if password is less than 3 characters',
       (WidgetTester tester) async {
     await tester.pumpWidget(defaultFlutterLogin());
 
@@ -97,8 +95,7 @@ void main() {
     clickSubmitButton();
     await tester.pumpAndSettle();
 
-    expect(passwordTextFieldWidget(tester).decoration.errorText,
-        'Password is too short!');
+    expect(passwordTextFieldWidget(tester).decoration!.errorText, 'Password is too short!');
 
     // too short
     await simulateOpenSoftKeyboard(tester, defaultFlutterLogin());
@@ -107,8 +104,7 @@ void main() {
     clickSubmitButton();
     await tester.pumpAndSettle();
 
-    expect(passwordTextFieldWidget(tester).decoration.errorText,
-        'Password is too short!');
+    expect(passwordTextFieldWidget(tester).decoration!.errorText, 'Password is too short!');
 
     // valid password based on default validator
     await simulateOpenSoftKeyboard(tester, defaultFlutterLogin());
@@ -117,21 +113,19 @@ void main() {
     clickSubmitButton();
     await tester.pumpAndSettle();
 
-    expect(passwordTextFieldWidget(tester).decoration.errorText, null);
+    expect(passwordTextFieldWidget(tester).decoration!.errorText, null);
 
     // valid password based on default validator
     await simulateOpenSoftKeyboard(tester, defaultFlutterLogin());
-    await tester.enterText(
-        findPasswordTextField(), 'aslfjsldfjlsjflsfjslfklsdjflsdjf');
+    await tester.enterText(findPasswordTextField(), 'aslfjsldfjlsjflsfjslfklsdjflsdjf');
     await tester.pumpAndSettle();
     clickSubmitButton();
     await tester.pumpAndSettle();
 
-    expect(passwordTextFieldWidget(tester).decoration.errorText, null);
+    expect(passwordTextFieldWidget(tester).decoration!.errorText, null);
   });
 
-  testWidgets('Confirm password field throws error if not match with password',
-      (WidgetTester tester) async {
+  testWidgets('Confirm password field throws error if not match with password', (WidgetTester tester) async {
     await tester.pumpWidget(defaultFlutterLogin());
 
     // wait for loading animation to finish
@@ -151,9 +145,8 @@ void main() {
     clickSubmitButton();
     await tester.pumpAndSettle();
 
-    expect(passwordTextFieldWidget(tester).decoration.errorText, null);
-    expect(confirmPasswordTextFieldWidget(tester).decoration.errorText,
-        LoginMessages.defaultConfirmPasswordError);
+    expect(passwordTextFieldWidget(tester).decoration!.errorText, null);
+    expect(confirmPasswordTextFieldWidget(tester).decoration!.errorText, LoginMessages.defaultConfirmPasswordError);
 
     // match
     await simulateOpenSoftKeyboard(tester, defaultFlutterLogin());
@@ -164,17 +157,16 @@ void main() {
     clickSubmitButton();
     await tester.pumpAndSettle();
 
-    expect(passwordTextFieldWidget(tester).decoration.errorText, null);
-    expect(confirmPasswordTextFieldWidget(tester).decoration.errorText, null);
+    expect(passwordTextFieldWidget(tester).decoration!.errorText, null);
+    expect(confirmPasswordTextFieldWidget(tester).decoration!.errorText, null);
   });
 
-  testWidgets('Custom emailValidator should show error when return a string',
-      (WidgetTester tester) async {
+  testWidgets('Custom emailValidator should show error when return a string', (WidgetTester tester) async {
     final loginBuilder = () => widget(FlutterLogin(
           onSignup: (data) => null,
           onLogin: (data) => null,
           onRecoverPassword: (data) => null,
-          emailValidator: (value) => value.endsWith('.com') ? null : 'Invalid!',
+          emailValidator: (value) => value?.endsWith('.com') ?? false ? null : 'Invalid!',
         ));
     await tester.pumpWidget(loginBuilder());
     await tester.pumpAndSettle(loadingAnimationDuration);
@@ -186,7 +178,7 @@ void main() {
     clickSubmitButton();
     await tester.pumpAndSettle();
 
-    expect(nameTextFieldWidget(tester).decoration.errorText, 'Invalid!');
+    expect(nameTextFieldWidget(tester).decoration!.errorText, 'Invalid!');
 
     // valid value
     await simulateOpenSoftKeyboard(tester, loginBuilder());
@@ -195,11 +187,10 @@ void main() {
     clickSubmitButton();
     await tester.pumpAndSettle();
 
-    expect(nameTextFieldWidget(tester).decoration.errorText, null);
+    expect(nameTextFieldWidget(tester).decoration!.errorText, null);
   });
 
-  testWidgets('Custom passwordValidator should show error when return a string',
-      (WidgetTester tester) async {
+  testWidgets('Custom passwordValidator should show error when return a string', (WidgetTester tester) async {
     final loginBuilder = () => widget(FlutterLogin(
           onSignup: (data) => null,
           onLogin: (data) => null,
@@ -215,7 +206,7 @@ void main() {
     clickSubmitButton();
     await tester.pumpAndSettle();
 
-    expect(passwordTextFieldWidget(tester).decoration.errorText, 'Invalid!');
+    expect(passwordTextFieldWidget(tester).decoration!.errorText, 'Invalid!');
 
     // valid value
     await simulateOpenSoftKeyboard(tester, loginBuilder());
@@ -224,17 +215,15 @@ void main() {
     clickSubmitButton();
     await tester.pumpAndSettle();
 
-    expect(passwordTextFieldWidget(tester).decoration.errorText, null);
+    expect(passwordTextFieldWidget(tester).decoration!.errorText, null);
   });
 
-  testWidgets("Password recovery should show success message if email is valid",
-      (WidgetTester tester) async {
+  testWidgets("Password recovery should show success message if email is valid", (WidgetTester tester) async {
     const users = ['near@gmail.com', 'hunter69@gmail.com'];
     final loginBuilder = () => widget(FlutterLogin(
           onSignup: (data) => null,
           onLogin: (data) => null,
-          onRecoverPassword: (data) =>
-              users.contains(data) ? null : Future.value('User not exists'),
+          onRecoverPassword: (data) => users.contains(data) ? null : Future.value('User not exists'),
           emailValidator: (value) => null,
         ));
     await tester.pumpWidget(loginBuilder());
@@ -260,16 +249,13 @@ void main() {
     clickSubmitButton();
     tester.binding.scheduleWarmUpFrame(); // wait for flushbar to show up
 
-    expect(
-        find.text(LoginMessages.defaultRecoverPasswordSuccess), findsOneWidget);
+    expect(find.text(LoginMessages.defaultRecoverPasswordSuccess), findsOneWidget);
     waitForFlushbarToClose(tester);
   });
 
-  testWidgets('Custom login messages should display correct texts',
-      (WidgetTester tester) async {
+  testWidgets('Custom login messages should display correct texts', (WidgetTester tester) async {
     const recoverIntro = "Don't feel bad. Happens all the time.";
-    const recoverDescription =
-        'Lorem Ipsum is simply dummy text of the printing and typesetting industry';
+    const recoverDescription = 'Lorem Ipsum is simply dummy text of the printing and typesetting industry';
     const recoverSuccess = 'Password rescued successfully';
     final loginBuilder = () => widget(FlutterLogin(
           onSignup: (data) => null,
@@ -292,15 +278,15 @@ void main() {
     await tester.pumpAndSettle(loadingAnimationDuration);
 
     var nameTextField = nameTextFieldWidget(tester);
-    expect(nameTextField.decoration.labelText, 'Username');
+    expect(nameTextField.decoration!.labelText, 'Username');
     expect(find.text('Username'), findsOneWidget);
 
     final passwordTextField = passwordTextFieldWidget(tester);
-    expect(passwordTextField.decoration.labelText, 'Pass');
+    expect(passwordTextField.decoration!.labelText, 'Pass');
     expect(find.text('Pass'), findsOneWidget);
 
     final confirmPasswordTextField = confirmPasswordTextFieldWidget(tester);
-    expect(confirmPasswordTextField.decoration.labelText, 'Confirm');
+    expect(confirmPasswordTextField.decoration!.labelText, 'Confirm');
     expect(find.text('Confirm'), findsOneWidget);
 
     var submitButton = submitButtonWidget();
@@ -328,15 +314,14 @@ void main() {
     clickSubmitButton();
     await tester.pumpAndSettle();
 
-    expect(confirmPasswordTextFieldWidget(tester).decoration.errorText,
-        'Not match!');
+    expect(confirmPasswordTextFieldWidget(tester).decoration!.errorText, 'Not match!');
 
     // Go to forgot password page
     clickForgotPasswordButton();
     await tester.pumpAndSettle();
 
     nameTextField = nameTextFieldWidget(tester);
-    expect(nameTextField.decoration.labelText, 'Username');
+    expect(nameTextField.decoration!.labelText, 'Username');
     expect(find.text('Username'), findsOneWidget);
 
     submitButton = submitButtonWidget();
@@ -369,8 +354,7 @@ void main() {
     waitForFlushbarToClose(tester);
   });
 
-  testWidgets('showDebugButtons = false should not show debug buttons',
-      (WidgetTester tester) async {
+  testWidgets('showDebugButtons = false should not show debug buttons', (WidgetTester tester) async {
     var flutterLogin = widget(FlutterLogin(
       onSignup: (data) => null,
       onLogin: (data) => null,
@@ -394,8 +378,7 @@ void main() {
     expect(findDebugToolbar(), findsNothing);
   });
 
-  testWidgets('Leave logo parameter empty should not display login logo image',
-      (WidgetTester tester) async {
+  testWidgets('Leave logo parameter empty should not display login logo image', (WidgetTester tester) async {
     // default device height is 600. Logo is hidden in all cases because there is no space to display
     setScreenSize(Size(786, 1024));
 
@@ -424,8 +407,7 @@ void main() {
     addTearDown(() => clearScreenSize());
   });
 
-  testWidgets('Leave title parameter empty should not display login title',
-      (WidgetTester tester) async {
+  testWidgets('Leave title parameter empty should not display login title', (WidgetTester tester) async {
     var flutterLogin = widget(FlutterLogin(
       onSignup: (data) => null,
       onLogin: (data) => null,
@@ -465,7 +447,7 @@ void main() {
       (WidgetTester tester) async {
     final loginBuilder = () => widget(FlutterLogin(
           onSignup: (data) => null,
-          onLogin: (s)=>null,
+          onLogin: (s) => null,
           onRecoverPassword: (data) => null,
           emailValidator: mockCallback.emailValidator,
           onSubmitAnimationCompleted: mockCallback.onSubmitAnimationCompleted,
@@ -490,7 +472,7 @@ void main() {
       mockCallback.emailValidator('invalid-name'),
       mockCallback.passwordValidator(user.data[1]),
     ]);
-    verifyNever(mockCallback.onLogin(any));
+    verifyNever(mockCallback.onLogin(any!));
     verifyNever(mockCallback.onSubmitAnimationCompleted());
 
     clearInteractions(mockCallback);
@@ -507,7 +489,7 @@ void main() {
     verifyInOrder([
       mockCallback.emailValidator(invalidUser.data[0]),
       mockCallback.passwordValidator(invalidUser.data[1]),
-      mockCallback.onLogin(any),
+      mockCallback.onLogin(any!),
     ]);
     verifyNever(mockCallback.onSubmitAnimationCompleted());
 
@@ -525,7 +507,7 @@ void main() {
     verifyInOrder([
       mockCallback.emailValidator(user.data[0]),
       mockCallback.passwordValidator(user.data[1]),
-      mockCallback.onLogin(any),
+      mockCallback.onLogin(any!),
       mockCallback.onSubmitAnimationCompleted(),
     ]);
 
@@ -538,7 +520,7 @@ void main() {
     final loginBuilder = () => widget(FlutterLogin(
           onLogin: (data) => null,
           //onSignup: mockCallback.onSignup,
-          onSignup: (d)=>null,
+          onSignup: (d) => null,
           onRecoverPassword: (data) => null,
           emailValidator: mockCallback.emailValidator,
           onSubmitAnimationCompleted: mockCallback.onSubmitAnimationCompleted,
@@ -567,7 +549,7 @@ void main() {
 
     verifyNever(mockCallback.emailValidator(invalidUser.data[0]));
     verifyNever(mockCallback.passwordValidator(invalidUser.data[1]));
-    verifyNever(mockCallback.onSignup(any));
+    verifyNever(mockCallback.onSignup(any!));
     verifyNever(mockCallback.onSubmitAnimationCompleted());
 
     clearInteractions(mockCallback);
@@ -587,7 +569,7 @@ void main() {
       mockCallback.emailValidator('invalid-name'),
       mockCallback.passwordValidator(user.data[1]),
     ]);
-    verifyNever(mockCallback.onSignup(any));
+    verifyNever(mockCallback.onSignup(any!));
     verifyNever(mockCallback.onSubmitAnimationCompleted());
 
     clearInteractions(mockCallback);
@@ -598,8 +580,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.enterText(findPasswordTextField(), invalidUser.data[1]);
     await tester.pumpAndSettle();
-    await tester.enterText(
-        findConfirmPasswordTextField(), invalidUser.data[1]);
+    await tester.enterText(findConfirmPasswordTextField(), invalidUser.data[1]);
     await tester.pumpAndSettle();
     clickSubmitButton();
     await tester.pumpAndSettle();
@@ -607,7 +588,7 @@ void main() {
     verifyInOrder([
       mockCallback.emailValidator(invalidUser.data[0]),
       mockCallback.passwordValidator(invalidUser.data[1]),
-      mockCallback.onSignup(any),
+      mockCallback.onSignup(any!),
     ]);
     verifyNever(mockCallback.onSubmitAnimationCompleted());
 
@@ -627,7 +608,7 @@ void main() {
     verifyInOrder([
       mockCallback.emailValidator(user.data[0]),
       mockCallback.passwordValidator(user.data[1]),
-      mockCallback.onSignup(any),
+      mockCallback.onSignup(any!),
       mockCallback.onSubmitAnimationCompleted(),
     ]);
 
@@ -655,14 +636,14 @@ void main() {
     clickForgotPasswordButton();
     await tester.pumpAndSettle();
 
-    expect(nameTextFieldWidget(tester).controller.text, 'near@gmail.com');
+    expect(nameTextFieldWidget(tester).controller!.text, 'near@gmail.com');
 
     clickGoBackButton();
     await tester.pumpAndSettle();
 
-    expect(nameTextFieldWidget(tester).controller.text, 'near@gmail.com');
-    expect(passwordTextFieldWidget(tester).controller.text, '12345');
-    expect(confirmPasswordTextFieldWidget(tester).controller.text, 'abcde');
+    expect(nameTextFieldWidget(tester).controller!.text, 'near@gmail.com');
+    expect(passwordTextFieldWidget(tester).controller!.text, '12345');
+    expect(confirmPasswordTextFieldWidget(tester).controller!.text, 'abcde');
   });
 
   // https://github.com/NearHuscarl/flutter_login/issues/20
@@ -689,8 +670,7 @@ void main() {
     setScreenSize(Size(480, enoughHeight));
     await tester.pumpWidget(flutterLogin);
     await tester.pumpAndSettle(loadingAnimationDuration);
-    expect(logoWidget(tester).height,
-        inInclusiveRange(kMinLogoHeight, kMaxLogoHeight));
+    expect(logoWidget(tester).height, inInclusiveRange(kMinLogoHeight, kMaxLogoHeight));
 
     setScreenSize(Size(480, verySmallHeight));
     await tester.pumpWidget(flutterLogin);
@@ -704,8 +684,7 @@ void main() {
   // TODO: wait for flutter to add support for testing in web environment on Windows 10
   // https://github.com/flutter/flutter/issues/44583
   // https://github.com/NearHuscarl/flutter_login/issues/7
-  testWidgets('AnimatedText should be centered in mobile and web consistently',
-      (WidgetTester tester) async {
+  testWidgets('AnimatedText should be centered in mobile and web consistently', (WidgetTester tester) async {
     await tester.pumpWidget(defaultFlutterLogin());
     await tester.pumpAndSettle(loadingAnimationDuration);
 

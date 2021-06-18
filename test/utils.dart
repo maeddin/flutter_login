@@ -9,11 +9,11 @@ import '../lib/src/widgets/animated_button.dart';
 const loadingAnimationDuration = const Duration(seconds: 1);
 
 class LoginCallback {
-  Future<String> onLogin(LoginData data) => null;
-  Future<String> onSignup(LoginData data) => null;
-  Future<String> onRecoverPassword(String data) => null;
-  String emailValidator(String value) => null;
-  String passwordValidator(String value) => null;
+  Future<String>? onLogin(LoginData data) => null;
+  Future<String>? onSignup(LoginData data) => null;
+  Future<String>? onRecoverPassword(String data) => null;
+  String? emailValidator(String? value) => null;
+  String? passwordValidator(String value) => null;
   void onSubmitAnimationCompleted() {}
 }
 
@@ -47,9 +47,9 @@ List<LoginData> stubCallback(MockCallback mockCallback) {
 Widget defaultFlutterLogin() {
   return MaterialApp(
     home: FlutterLogin(
-      onSignup: (data) => null,
-      onLogin: (data) => null,
-      onRecoverPassword: (data) => null,
+      onSignup: ((data) => null) as Future<String> Function(LoginData),
+      onLogin: ((data) => null) as Future<String> Function(LoginData),
+      onRecoverPassword: ((data) => null) as Future<String> Function(String),
     ),
   );
 }
@@ -71,7 +71,7 @@ Future<void> simulateOpenSoftKeyboard(
   await tester.pumpWidget(widget);
 }
 
-bool isSignup(WidgetTester tester) {
+bool? isSignup(WidgetTester tester) {
   return confirmPasswordTextFieldWidget(tester).enabled;
 }
 
@@ -124,35 +124,35 @@ TextField confirmPasswordTextFieldWidget(WidgetTester tester) {
 }
 
 AnimatedButton submitButtonWidget() {
-  return find.byType(AnimatedButton).evaluate().first.widget;
+  return find.byType(AnimatedButton).evaluate().first.widget as AnimatedButton;
 }
 
 FlatButton forgotPasswordButtonWidget() {
-  return find.byType(FlatButton).evaluate().first.widget;
+  return find.byType(FlatButton).evaluate().first.widget as FlatButton;
 }
 
 FlatButton switchAuthButtonWidget() {
-  return find.byType(FlatButton).evaluate().last.widget;
+  return find.byType(FlatButton).evaluate().last.widget as FlatButton;
 }
 
 FlatButton goBackButtonWidget() {
-  return find.byType(FlatButton).evaluate().last.widget;
+  return find.byType(FlatButton).evaluate().last.widget as FlatButton;
 }
 
 Text recoverIntroTextWidget() {
-  return find.byKey(kRecoverPasswordIntroKey).evaluate().single.widget;
+  return find.byKey(kRecoverPasswordIntroKey).evaluate().single.widget as Text;
 }
 
 Text recoverDescriptionTextWidget() {
-  return find.byKey(kRecoverPasswordDescriptionKey).evaluate().single.widget;
+  return find.byKey(kRecoverPasswordDescriptionKey).evaluate().single.widget as Text;
 }
 
 // tester.tap() not working for some reasons. Workaround:
 // https://github.com/flutter/flutter/issues/31066#issuecomment-530507319
-void clickSubmitButton() => submitButtonWidget().onPressed();
-void clickForgotPasswordButton() => forgotPasswordButtonWidget().onPressed();
-void clickGoBackButton() => goBackButtonWidget().onPressed();
-void clickSwitchAuthButton() => switchAuthButtonWidget().onPressed();
+void clickSubmitButton() => submitButtonWidget().onPressed?.call()??(){};
+void clickForgotPasswordButton() => forgotPasswordButtonWidget().onPressed!();
+void clickGoBackButton() => goBackButtonWidget().onPressed!();
+void clickSwitchAuthButton() => switchAuthButtonWidget().onPressed!();
 
 /// this prevents this error:
 /// A Timer is still pending even after the widget tree was disposed.
