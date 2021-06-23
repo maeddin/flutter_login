@@ -696,7 +696,7 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
                     nextFocusNode: isLast
                         ? null
                         : (auth.isLogin
-                        ? iterable.skip(index + 1).cast<List<Object>?>().firstWhere((element) => (element![0] as FieldData).mode == Mode.LOGIN, orElse: () => null)?.elementAt(2) as FocusNode?
+                        ? iterable.skip(index + 1).cast<List<Object?>?>().firstWhere((element) => (element![0] as FieldData).mode == Mode.LOGIN, orElse: () => [null, null, null])?.elementAt(2) as FocusNode?
                         : focusNodes[index + 1]),
                   );
                 }).toList(),),
