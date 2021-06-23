@@ -438,12 +438,12 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
     _submitController!.forward();
     setState(() => _isSubmitting = true);
     final auth = Provider.of<Auth>(context, listen: false);
-    String error;
+    String? error;
 
     if (auth.isLogin) {
-      error = await auth.onLogin!(LoginData(auth.values!.map((e) => e.value).toList()))!;
+      error = await auth.onLogin!(LoginData(auth.values!.map((e) => e.value).toList()));
     } else {
-      error = await auth.onSignup!(LoginData(auth.values!.map((e) => e.value).toList()))!;
+      error = await auth.onSignup!(LoginData(auth.values!.map((e) => e.value).toList()));
     }
 
     if(!mounted) return true;
@@ -457,7 +457,7 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
     _submitController!.reverse();
 
     if (!DartHelper.isNullOrEmpty(error)) {
-      (widget.onFailed ?? showErrorToast).call(context, error);
+      (widget.onFailed ?? showErrorToast).call(context, error!);
       Future.delayed(const Duration(milliseconds: 271), () {
         setState(() => _showShadow = true);
       });

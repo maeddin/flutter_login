@@ -245,7 +245,7 @@ class FlutterLogin extends StatefulWidget {
 
   /// Email validating logic, Returns an error string to display if the input is
   /// invalid, or null otherwise
-  final FormFieldValidator<String>? emailValidator;
+  final FormFieldValidator<String?>? emailValidator;
 
   /// Called after the submit animation's completed. Put your route transition
   /// logic here. Recommend to use with [logoTag] and [titleTag]
