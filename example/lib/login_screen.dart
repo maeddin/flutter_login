@@ -1,6 +1,7 @@
-import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter_login/flutter_login.dart';
+
 import 'constants.dart';
 import 'custom_route.dart';
 import 'dashboard_screen.dart';
@@ -44,9 +45,19 @@ class LoginScreen extends StatelessWidget {
       logo: 'assets/images/ecorp.png',
       logoTag: Constants.logoTag,
       titleTag: Constants.titleTag,
-      messages: LoginMessages(
-        fieldData: [FieldData('Email', validator: (s, l)=>s.contains('a')?"hi":null, icon: Icon(Icons.account_circle, size: 25,)), FieldData('Password', hide: true), FieldData('Confirm Password', mode: Mode.REGISTER, hide: true)]
-      ),
+      messages: LoginMessages(fieldData: [
+        FieldData(
+          'Email',
+          validator: (s, l) => s.contains('a') ? "hi" : null,
+          icon: Icon(Icons.mail, size: 25),
+          inputType: TextInputType.emailAddress,
+          autofillHints: [AutofillHints.email],
+        ),
+        FieldData('Firstname', icon: Icon(Icons.person, size: 25), mode: Mode.REGISTER, inputType: TextInputType.name),
+        FieldData('Lastname', icon: Icon(Icons.person), mode: Mode.REGISTER, inputType: TextInputType.name),
+        FieldData('Password', hide: true),
+        FieldData('Confirm Password', mode: Mode.REGISTER, hide: true),
+      ]),
       // messages: LoginMessages(
       //   usernameHint: 'Username',
       //   passwordHint: 'Pass',
