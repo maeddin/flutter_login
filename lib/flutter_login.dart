@@ -104,7 +104,7 @@ class __HeaderState extends State<_Header> {
     final renderParagraph = RenderParagraph(
       TextSpan(
         text: widget.title,
-        style: theme.textTheme.display2!.copyWith(
+        style: theme.textTheme.bodyText2!.copyWith(
           fontSize: widget.loginTheme.beforeHeroFontSize,
         ),
       ),
@@ -162,14 +162,14 @@ class __HeaderState extends State<_Header> {
         tag: widget.titleTag,
         largeFontSize: widget.loginTheme.beforeHeroFontSize,
         smallFontSize: widget.loginTheme.afterHeroFontSize,
-        style: theme.textTheme.display2,
+        style: theme.textTheme.bodyText2,
         viewState: ViewState.enlarged,
       );
     } else if (!DartHelper.isNullOrEmpty(widget.title)) {
       title = Text(
         widget.title!,
         key: kTitleKey,
-        style: theme.textTheme.display2,
+        style: theme.textTheme.bodyText2,
       );
     } else {
       title = null;
@@ -425,16 +425,16 @@ class _FlutterLoginState extends State<FlutterLogin> with TickerProviderStateMix
     final accentColor = loginTheme.accentColor ?? theme.accentColor;
     final errorColor = loginTheme.errorColor ?? theme.errorColor;
     // the background is a dark gradient, force to use white text if detect default black text color
-    final isDefaultBlackText = theme.textTheme.display2!.color == Typography.blackMountainView.display2!.color;
-    final titleStyle = theme.textTheme.display2!
+    final isDefaultBlackText = theme.textTheme.bodyText2!.color == Typography.blackMountainView.bodyText2!.color;
+    final titleStyle = theme.textTheme.bodyText2!
         .copyWith(
-          color: loginTheme.accentColor ?? (isDefaultBlackText ? Colors.white : theme.textTheme.display2!.color),
+          color: loginTheme.accentColor ?? (isDefaultBlackText ? Colors.white : theme.textTheme.bodyText2!.color),
           fontSize: loginTheme.beforeHeroFontSize,
           fontWeight: FontWeight.w300,
         )
         .merge(loginTheme.titleStyle);
-    final textStyle = theme.textTheme.body1!.copyWith(color: Colors.black54).merge(loginTheme.bodyStyle);
-    final textFieldStyle = theme.textTheme.subhead!.copyWith(color: Colors.black.withOpacity(.65), fontSize: 14).merge(loginTheme.textFieldStyle);
+    final textStyle = theme.textTheme.bodyText1!.copyWith(color: Colors.black54).merge(loginTheme.bodyStyle);
+    final textFieldStyle = theme.textTheme.subtitle1!.copyWith(color: Colors.black.withOpacity(.65), fontSize: 14).merge(loginTheme.textFieldStyle);
     final buttonStyle = theme.textTheme.button!.copyWith(color: Colors.white).merge(loginTheme.buttonStyle);
     final cardTheme = loginTheme.cardTheme;
     final inputTheme = loginTheme.inputTheme;
@@ -501,9 +501,9 @@ class _FlutterLoginState extends State<FlutterLogin> with TickerProviderStateMix
       // put it here because floatingActionButtonTheme doesnt have highlightColor property
       highlightColor: loginTheme.buttonTheme.highlightColor ?? theme.highlightColor,
       textTheme: theme.textTheme.copyWith(
-        display2: titleStyle,
-        body1: textStyle,
-        subhead: textFieldStyle,
+        bodyText2: titleStyle,
+        bodyText1: textStyle,
+        subtitle1: textFieldStyle,
         button: buttonStyle,
       ),
     );
