@@ -38,6 +38,7 @@ class ExpandableContainer extends StatefulWidget {
 class _ExpandableContainerState extends State<ExpandableContainer> {
   late Animation<double> _sizeAnimation;
   late Animation<Offset> _slideAnimation;
+  late Animation<double> _backgroundSlideAnimation;
   late AnimationController _controller;
 
   @override
@@ -58,13 +59,18 @@ class _ExpandableContainerState extends State<ExpandableContainer> {
       curve: const Interval(0.0, .6875, curve: Curves.bounceOut),
       reverseCurve: const Interval(0.0, .6875, curve: Curves.bounceIn),
     ));
+    final baseSlideAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(.6875, 1.0, curve: Curves.fastOutSlowIn),
+    );
+    _backgroundSlideAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.0,
+    ).animate(baseSlideAnimation);
     _slideAnimation = Tween<Offset>(
       begin: const Offset(-1, 0),
       end: const Offset(0, 0),
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: const Interval(.6875, 1.0, curve: Curves.fastOutSlowIn),
-    ))
+    ).animate(baseSlideAnimation)
       ..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
           widget.onExpandCompleted!();
@@ -79,8 +85,25 @@ class _ExpandableContainerState extends State<ExpandableContainer> {
       child: Stack(
         children: <Widget>[
           Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(color: widget.backgroundColor),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: AnimatedBuilder(
+                child: Container(
+                  color: widget.backgroundColor,
+                  width: widget.width,
+                  height: widget.height,
+                ),
+                animation: _backgroundSlideAnimation,
+                builder: (context, child) {
+                  return ClipRect(
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: child,
+                      widthFactor: _backgroundSlideAnimation.value,
+                    ),
+                  );
+                },
+              ),
             ),
           ),
           SlideTransition(

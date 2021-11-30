@@ -310,33 +310,36 @@ class _AnimatedPasswordTextFormFieldState
       autofillHints: widget.autofillHints,
       labelText: widget.labelText,
       prefixIcon: const Icon(FontAwesomeIcons.lock, size: 20),
-      suffixIcon: GestureDetector(
-        onTap: () => setState(() => _obscureText = !_obscureText),
-        dragStartBehavior: DragStartBehavior.down,
-        child: AnimatedCrossFade(
-          duration: const Duration(milliseconds: 250),
-          firstCurve: Curves.easeInOutSine,
-          secondCurve: Curves.easeInOutSine,
-          alignment: Alignment.center,
-          layoutBuilder: (Widget topChild, _, Widget bottomChild, __) {
-            return Stack(
-              alignment: Alignment.center,
-              children: <Widget>[bottomChild, topChild],
-            );
-          },
-          firstChild: const Icon(
-            Icons.visibility,
-            size: 25.0,
-            semanticLabel: 'show password',
+      suffixIcon: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: () => setState(() => _obscureText = !_obscureText),
+          dragStartBehavior: DragStartBehavior.down,
+          child: AnimatedCrossFade(
+            duration: const Duration(milliseconds: 250),
+            firstCurve: Curves.easeInOutSine,
+            secondCurve: Curves.easeInOutSine,
+            alignment: Alignment.center,
+            layoutBuilder: (Widget topChild, _, Widget bottomChild, __) {
+              return Stack(
+                alignment: Alignment.center,
+                children: <Widget>[bottomChild, topChild],
+              );
+            },
+            firstChild: const Icon(
+              Icons.visibility,
+              size: 25.0,
+              semanticLabel: 'show password',
+            ),
+            secondChild: const Icon(
+              Icons.visibility_off,
+              size: 25.0,
+              semanticLabel: 'hide password',
+            ),
+            crossFadeState: _obscureText
+                ? CrossFadeState.showFirst
+                : CrossFadeState.showSecond,
           ),
-          secondChild: const Icon(
-            Icons.visibility_off,
-            size: 25.0,
-            semanticLabel: 'hide password',
-          ),
-          crossFadeState: _obscureText
-              ? CrossFadeState.showFirst
-              : CrossFadeState.showSecond,
         ),
       ),
       obscureText: _obscureText,

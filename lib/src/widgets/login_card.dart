@@ -306,9 +306,7 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
       loadingController: _loadingController,
       interval: _nameTextFieldLoadingAnimationInterval,
       labelText: messages.userHint,
-      autofillHints: _isSubmitting
-          ? null
-          : [TextFieldUtils.getAutofillHints(widget.userType)],
+      autofillHints: [TextFieldUtils.getAutofillHints(widget.userType)],
       prefixIcon: const Icon(FontAwesomeIcons.solidUserCircle),
       keyboardType: TextFieldUtils.getKeyboardType(widget.userType),
       textInputAction: TextInputAction.next,
@@ -327,14 +325,9 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
       loadingController: _loadingController,
       interval: _passTextFieldLoadingAnimationInterval,
       labelText: messages.passwordHint,
-      autofillHints: _isSubmitting
-          ? null
-          : (auth.isLogin
-              ? [AutofillHints.password]
-              : [AutofillHints.newPassword]),
+      autofillHints: const [AutofillHints.password],
       controller: _passController,
-      textInputAction:
-          auth.isLogin ? TextInputAction.done : TextInputAction.next,
+      textInputAction: auth.isLogin ? TextInputAction.done : TextInputAction.next,
       focusNode: _passwordFocusNode,
       onFieldSubmitted: (value) {
         if (auth.isLogin) {
@@ -363,6 +356,7 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
       textInputAction: TextInputAction.done,
       focusNode: _confirmPasswordFocusNode,
       onFieldSubmitted: (value) => _submit(),
+      autofillHints: auth.isSignup ? const [AutofillHints.newPassword] : null,
       validator: auth.isSignup
           ? (value) {
               if (value != _passController.text) {
@@ -596,38 +590,41 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
       key: _formKey,
       child: Column(
         children: [
-          Container(
-            padding: const EdgeInsets.only(
-              left: cardPadding,
-              right: cardPadding,
-              top: cardPadding + 10,
-            ),
-            width: cardWidth,
+          AutofillGroup(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                _buildUserField(textFieldWidth, messages, auth),
-                const SizedBox(height: 20),
-                _buildPasswordField(textFieldWidth, messages, auth),
-                const SizedBox(height: 10),
+              children: [
+                Container(
+                  padding: const EdgeInsets.only(
+                    left: cardPadding,
+                    right: cardPadding,
+                    top: cardPadding + 10,
+                  ),
+                  width: cardWidth,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      _buildUserField(textFieldWidth, messages, auth),
+                      const SizedBox(height: 20),
+                      _buildPasswordField(textFieldWidth, messages, auth),
+                      const SizedBox(height: 10),
+                    ],
+                  ),
+                ),
+                ExpandableContainer(
+                  backgroundColor: theme.colorScheme.secondary,
+                  controller: _switchAuthController,
+                  initialState: isLogin ? ExpandableContainerState.shrunk : ExpandableContainerState.expanded,
+                  alignment: Alignment.topLeft,
+                  width: cardWidth,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: cardPadding,
+                    vertical: 10,
+                  ),
+                  onExpandCompleted: () => _postSwitchAuthController.forward(),
+                  child: _buildConfirmPasswordField(textFieldWidth, messages, auth),
+                ),
               ],
             ),
-          ),
-          ExpandableContainer(
-            backgroundColor: theme.colorScheme.secondary,
-            controller: _switchAuthController,
-            initialState: isLogin
-                ? ExpandableContainerState.shrunk
-                : ExpandableContainerState.expanded,
-            alignment: Alignment.topLeft,
-            color: theme.cardTheme.color,
-            width: cardWidth,
-            padding: const EdgeInsets.symmetric(
-              horizontal: cardPadding,
-              vertical: 10,
-            ),
-            onExpandCompleted: () => _postSwitchAuthController.forward(),
-            child: _buildConfirmPasswordField(textFieldWidth, messages, auth),
           ),
           Container(
             padding: Paddings.fromRBL(cardPadding),
