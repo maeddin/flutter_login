@@ -6,7 +6,7 @@ enum ExpandableContainerState {
 }
 
 class ExpandableContainer extends StatefulWidget {
-  ExpandableContainer({
+  const ExpandableContainer({
     Key? key,
     required this.child,
     required this.controller,
@@ -38,7 +38,7 @@ class ExpandableContainer extends StatefulWidget {
 class _ExpandableContainerState extends State<ExpandableContainer> {
   late Animation<double> _sizeAnimation;
   late Animation<Offset> _slideAnimation;
-  late final AnimationController _controller;
+  late AnimationController _controller;
 
   @override
   void initState() {
@@ -68,7 +68,6 @@ class _ExpandableContainerState extends State<ExpandableContainer> {
       ..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
           widget.onExpandCompleted!();
-          setState(() {});
         }
       });
   }
@@ -79,7 +78,7 @@ class _ExpandableContainerState extends State<ExpandableContainer> {
       sizeFactor: _sizeAnimation,
       child: Stack(
         children: <Widget>[
-          if(!_controller.isCompleted) Positioned.fill(
+          Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(color: widget.backgroundColor),
             ),

@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_login/flutter_login.dart';
+import 'package:flutter_login/src/constants.dart';
+import 'package:flutter_login/src/widgets/animated_button.dart';
+import 'package:flutter_login/src/widgets/animated_icon.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import '../lib/flutter_login.dart';
-import '../lib/src/constants.dart';
-import '../lib/src/widgets/animated_button.dart';
 
 // TODO: get this value from fluter_login package
-const loadingAnimationDuration = const Duration(seconds: 1);
+const loadingAnimationDuration = Duration(seconds: 1);
 
 class LoginCallback {
-  Future<String>? onLogin(LoginData data) => null;
-  Future<String>? onSignup(LoginData data) => null;
-  Future<String>? onRecoverPassword(String data) => null;
-  String? emailValidator(String? value) => null;
-  String? passwordValidator(String value) => null;
+  Future<String>? onLogin(LoginData? data) => null;
+  Future<String>? onSignup(SignupData? data) => null;
+  Future<String>? onRecoverPassword(String? data) => null;
+  String? userValidator(String? value) => null;
+  String? passwordValidator(String? value) => null;
   void onSubmitAnimationCompleted() {}
 }
 
@@ -21,23 +22,40 @@ class MockCallback extends Mock implements LoginCallback {}
 
 final mockCallback = MockCallback();
 
-List<LoginData> stubCallback(MockCallback mockCallback) {
+List<LoginData> loginStubCallback(MockCallback mockCallback) {
   reset(mockCallback);
 
-  final user = LoginData(['near@gmail.com', '12345']);
-  final invalidUser = LoginData(['not.exists@gmail.com', '']);
+  final user = LoginData(name: 'near@gmail.com', password: '12345');
+  final invalidUser = LoginData(name: 'not.exists@gmail.com', password: '');
 
-  when(mockCallback.emailValidator(user.data[0])).thenReturn(null);
-  when(mockCallback.emailValidator('invalid-name')).thenReturn('Invalid!');
+  when(mockCallback.userValidator(user.name)).thenReturn(null);
+  when(mockCallback.userValidator('invalid-name')).thenReturn('Invalid!');
 
-  when(mockCallback.passwordValidator(user.data[1])).thenReturn(null);
+  when(mockCallback.passwordValidator(user.password)).thenReturn(null);
   when(mockCallback.passwordValidator('invalid-name')).thenReturn('Invalid!');
 
-  when(mockCallback.onLogin(user)).thenAnswer((_) => Future.value(null));
+  when(mockCallback.onLogin(user)).thenAnswer((_) => null);
   when(mockCallback.onLogin(invalidUser))
       .thenAnswer((_) => Future.value('Invalid!'));
 
-  when(mockCallback.onSignup(user)).thenAnswer((_) => Future.value(null));
+  return [user, invalidUser];
+}
+
+List<SignupData> signupStubCallback(MockCallback mockCallback) {
+  reset(mockCallback);
+
+  final user =
+      SignupData.fromSignupForm(name: 'near@gmail.com', password: '12345');
+  final invalidUser =
+      SignupData.fromSignupForm(name: 'not.exists@gmail.com', password: '');
+
+  when(mockCallback.userValidator(user.name)).thenReturn(null);
+  when(mockCallback.userValidator('invalid-name')).thenReturn('Invalid!');
+
+  when(mockCallback.passwordValidator(user.password)).thenReturn(null);
+  when(mockCallback.passwordValidator('invalid-name')).thenReturn('Invalid!');
+
+  when(mockCallback.onSignup(user)).thenAnswer((_) => null);
   when(mockCallback.onSignup(invalidUser))
       .thenAnswer((_) => Future.value('Invalid!'));
 
@@ -47,9 +65,9 @@ List<LoginData> stubCallback(MockCallback mockCallback) {
 Widget defaultFlutterLogin() {
   return MaterialApp(
     home: FlutterLogin(
-      onSignup: ((data) => null) as Future<String> Function(LoginData),
-      onLogin: ((data) => null) as Future<String> Function(LoginData),
-      onRecoverPassword: ((data) => null) as Future<String> Function(String),
+      onSignup: (data) => null,
+      onLogin: (data) => null,
+      onRecoverPassword: (data) => null,
     ),
   );
 }
@@ -83,6 +101,10 @@ Finder findTitle() {
   return find.byKey(kTitleKey);
 }
 
+Finder findNthField(int n) {
+  return find.byType(TextFormField).at(n);
+}
+
 Finder findNameTextField() {
   return find.byType(TextFormField).at(0);
 }
@@ -96,11 +118,11 @@ Finder findConfirmPasswordTextField() {
 }
 
 Finder findForgotPasswordButton() {
-  return find.byType(FlatButton).at(0);
+  return find.byType(MaterialButton).at(0);
 }
 
 Finder findSwitchAuthButton() {
-  return find.byType(FlatButton).at(1);
+  return find.byType(MaterialButton).at(1);
 }
 
 Finder findDebugToolbar() {
@@ -123,20 +145,25 @@ TextField confirmPasswordTextFieldWidget(WidgetTester tester) {
   return tester.widgetList<TextField>(find.byType(TextField)).elementAt(2);
 }
 
+AnimatedIconButton firstProviderButton() {
+  return find.byType(AnimatedIconButton).evaluate().first.widget
+      as AnimatedIconButton;
+}
+
 AnimatedButton submitButtonWidget() {
   return find.byType(AnimatedButton).evaluate().first.widget as AnimatedButton;
 }
 
-FlatButton forgotPasswordButtonWidget() {
-  return find.byType(FlatButton).evaluate().first.widget as FlatButton;
+TextButton forgotPasswordButtonWidget() {
+  return find.byType(TextButton).evaluate().first.widget as TextButton;
 }
 
-FlatButton switchAuthButtonWidget() {
-  return find.byType(FlatButton).evaluate().last.widget as FlatButton;
+MaterialButton switchAuthButtonWidget() {
+  return find.byType(MaterialButton).evaluate().last.widget as MaterialButton;
 }
 
-FlatButton goBackButtonWidget() {
-  return find.byType(FlatButton).evaluate().last.widget as FlatButton;
+MaterialButton goBackButtonWidget() {
+  return find.byType(MaterialButton).evaluate().last.widget as MaterialButton;
 }
 
 Text recoverIntroTextWidget() {
@@ -144,15 +171,17 @@ Text recoverIntroTextWidget() {
 }
 
 Text recoverDescriptionTextWidget() {
-  return find.byKey(kRecoverPasswordDescriptionKey).evaluate().single.widget as Text;
+  return find.byKey(kRecoverPasswordDescriptionKey).evaluate().single.widget
+      as Text;
 }
 
 // tester.tap() not working for some reasons. Workaround:
 // https://github.com/flutter/flutter/issues/31066#issuecomment-530507319
-void clickSubmitButton() => submitButtonWidget().onPressed?.call()??(){};
+void clickSubmitButton() => submitButtonWidget().onPressed!();
 void clickForgotPasswordButton() => forgotPasswordButtonWidget().onPressed!();
 void clickGoBackButton() => goBackButtonWidget().onPressed!();
 void clickSwitchAuthButton() => switchAuthButtonWidget().onPressed!();
+void clickFirstProvider() => firstProviderButton().onPressed();
 
 /// this prevents this error:
 /// A Timer is still pending even after the widget tree was disposed.
@@ -160,4 +189,4 @@ void clickSwitchAuthButton() => switchAuthButtonWidget().onPressed!();
 /// go away.
 /// https://stackoverflow.com/a/57930945/9449426
 void waitForFlushbarToClose(WidgetTester tester) async =>
-    await tester.pumpAndSettle(const Duration(seconds: 4));
+    await tester.pump(const Duration(seconds: 4));

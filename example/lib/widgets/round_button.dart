@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
 class RoundButton extends StatefulWidget {
-  RoundButton({
-    Key key,
-    @required this.icon,
-    @required this.onPressed,
-    @required this.label,
-    @required this.loadingController,
+  const RoundButton({
+    Key? key,
+    required this.icon,
+    required this.onPressed,
+    required this.label,
+    required this.loadingController,
     this.interval = const Interval(0, 1, curve: Curves.ease),
     this.size = 60,
   }) : super(key: key);
 
-  final Widget icon;
+  final Widget? icon;
   final VoidCallback onPressed;
-  final String label;
-  final AnimationController loadingController;
+  final String? label;
+  final AnimationController? loadingController;
   final Interval interval;
   final double size;
 
@@ -24,9 +24,9 @@ class RoundButton extends StatefulWidget {
 
 class _RoundButtonState extends State<RoundButton>
     with SingleTickerProviderStateMixin {
-  AnimationController _pressController;
-  Animation<double> _scaleLoadingAnimation;
-  Animation<double> _scaleAnimation;
+  late AnimationController _pressController;
+  late Animation<double> _scaleLoadingAnimation;
+  late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
@@ -39,7 +39,7 @@ class _RoundButtonState extends State<RoundButton>
     );
     _scaleLoadingAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
-        parent: widget.loadingController,
+        parent: widget.loadingController!,
         curve: widget.interval,
       ),
     );
@@ -47,15 +47,15 @@ class _RoundButtonState extends State<RoundButton>
       CurvedAnimation(
         parent: _pressController,
         curve: Curves.easeOut,
-        reverseCurve: ElasticInCurve(0.3),
+        reverseCurve: const ElasticInCurve(0.3),
       ),
     );
   }
 
   @override
   void dispose() {
-    super.dispose();
     _pressController.dispose();
+    super.dispose();
   }
 
   @override
@@ -82,7 +82,6 @@ class _RoundButtonState extends State<RoundButton>
                     // allow more than 1 FAB in the same screen (hero tag cannot be duplicated)
                     heroTag: null,
                     backgroundColor: primaryColor.shade400,
-                    child: widget.icon,
                     onPressed: () {
                       _pressController.forward().then((_) {
                         _pressController.reverse();
@@ -90,15 +89,16 @@ class _RoundButtonState extends State<RoundButton>
                       widget.onPressed();
                     },
                     foregroundColor: Colors.white,
+                    child: widget.icon,
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
-              widget.label,
+              widget.label!,
               style:
-                  theme.textTheme.caption.copyWith(color: theme.primaryColor),
+                  theme.textTheme.caption!.copyWith(color: theme.primaryColor),
               textAlign: TextAlign.center,
             ),
           ],
