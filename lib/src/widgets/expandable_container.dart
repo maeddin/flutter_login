@@ -79,8 +79,18 @@ class _ExpandableContainerState extends State<ExpandableContainer> {
       child: Stack(
         children: <Widget>[
           Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(color: widget.backgroundColor),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: AnimatedBuilder(
+                animation: _slideAnimation,
+                builder: (context, _) => FractionallySizedBox(
+                  heightFactor: 1,
+                  widthFactor: -_slideAnimation.value.dx,
+                  child: DecoratedBox(
+                      decoration:
+                      BoxDecoration(color: widget.backgroundColor)),
+                ),
+              ),
             ),
           ),
           SlideTransition(

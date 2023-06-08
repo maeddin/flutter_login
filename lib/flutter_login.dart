@@ -10,8 +10,8 @@ import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter_login/src/models/login_user_type.dart';
 import 'package:flutter_login/src/models/term_of_service.dart';
 import 'package:flutter_login/src/models/user_form_field.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_signin_button/button_list.dart';
+import 'package:provider/provider.dart';
 
 import 'src/color_helper.dart';
 import 'src/constants.dart';
@@ -26,14 +26,16 @@ import 'src/widgets/gradient_box.dart';
 import 'src/widgets/hero_text.dart';
 import 'theme.dart';
 
+export 'package:flutter_signin_button/button_list.dart';
+
 export 'src/models/login_data.dart';
 export 'src/models/login_user_type.dart';
 export 'src/models/signup_data.dart';
+export 'src/models/term_of_service.dart';
 export 'src/models/user_form_field.dart';
+export 'src/providers/auth.dart';
 export 'src/providers/login_messages.dart';
 export 'src/providers/login_theme.dart';
-export 'src/models/term_of_service.dart';
-export 'src/providers/auth.dart';
 
 class LoginProvider {
   /// Used for custom sign-in buttons.
@@ -41,6 +43,8 @@ class LoginProvider {
   /// NOTE: Both [button] and [icon] can be added to [LoginProvider],
   /// but [button] will take preference over [icon]
   final Buttons? button;
+
+  final ProviderButton? customButton;
 
   /// The icon shown on the provider button
   ///
@@ -68,12 +72,13 @@ class LoginProvider {
 
   const LoginProvider({
     this.button,
+    this.customButton,
     this.icon,
     this.callback,
     this.label = '',
     this.providerNeedsSignUpCallback,
     // this.animated = true
-  }) : assert(button != null || icon != null);
+  }) : assert(button != null || icon != null || customButton != null);
 }
 
 class _AnimationTimeDilationDropdown extends StatelessWidget {
@@ -290,18 +295,19 @@ class FlutterLogin extends StatefulWidget {
       this.loginAfterSignUp = true,
       this.footer,
       this.hideProvidersTitle = false,
-      this.additionalSignupFields,
-      this.disableCustomPageTransformer = false,
-      this.navigateBackAfterRecovery = false,
-      this.termsOfService = const <TermOfService>[],
-      this.onConfirmRecover,
-      this.onConfirmSignup,
-      this.onResendCode,
-      this.savedEmail = '',
-      this.savedPassword = '',
-      this.initialAuthMode = AuthMode.login,
-      this.children})
-      : assert((logo is String?) || (logo is ImageProvider?)),
+    this.additionalSignupFields,
+    this.disableCustomPageTransformer = false,
+    this.navigateBackAfterRecovery = false,
+    this.termsOfService = const <TermOfService>[],
+    this.onConfirmRecover,
+    this.onConfirmSignup,
+    this.onResendCode,
+    this.savedEmail = '',
+    this.savedPassword = '',
+    this.initialAuthMode = AuthMode.login,
+    this.children,
+    this.socialLoginFirst = false,
+  })  : assert((logo is String?) || (logo is ImageProvider?)),
         logo = logo is String ? AssetImage(logo) : logo,
         super(key: key);
 
@@ -414,6 +420,8 @@ class FlutterLogin extends StatefulWidget {
   /// The initial auth mode for the widget to show. This defaults to [AuthMode.login]
   /// if not specified. This field can allow you to show the sign up state by default.
   final AuthMode initialAuthMode;
+
+  final bool socialLoginFirst;
 
   /// Supply custom widgets to the auth stack such as a custom logo widget
   final List<Widget>? children;
@@ -800,6 +808,7 @@ class _FlutterLoginState extends State<FlutterLogin>
                         loginTheme: widget.theme,
                         navigateBackAfterRecovery:
                             widget.navigateBackAfterRecovery,
+                        socialLoginFirst: widget.socialLoginFirst,
                       ),
                     ),
                     Positioned(
@@ -822,4 +831,10 @@ class _FlutterLoginState extends State<FlutterLogin>
       ),
     );
   }
+}
+
+class ProviderButton {
+  final Function(BuildContext context, Future Function() onPressed) builder;
+
+  ProviderButton({required this.builder});
 }

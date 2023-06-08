@@ -60,11 +60,12 @@ class LoginScreen extends StatelessWidget {
       onConfirmRecover: _signupConfirm,
       onConfirmSignup: _signupConfirm,
       loginAfterSignUp: false,
+      socialLoginFirst: true,
       loginProviders: [
         LoginProvider(
           button: Buttons.LinkedIn,
           label: 'Sign in with LinkedIn',
-          callback: () async {
+          callback: (_) async {
             return null;
           },
           providerNeedsSignUpCallback: () {
@@ -75,13 +76,13 @@ class LoginScreen extends StatelessWidget {
         LoginProvider(
           icon: FontAwesomeIcons.google,
           label: 'Google',
-          callback: () async {
+          callback: (_) async {
             return null;
           },
         ),
         LoginProvider(
           icon: FontAwesomeIcons.githubAlt,
-          callback: () async {
+          callback: (_) async {
             debugPrint('start github sign in');
             await Future.delayed(loginTime);
             debugPrint('stop github sign in');

@@ -18,6 +18,7 @@ class _LoginCard extends StatefulWidget {
     this.hideSignUpButton = false,
     this.loginAfterSignUp = true,
     this.hideProvidersTitle = false,
+    this.socialLoginFirst = false,
   }) : super(key: key);
 
   final AnimationController loadingController;
@@ -35,6 +36,7 @@ class _LoginCard extends StatefulWidget {
   final LoginUserType userType;
   final bool requireAdditionalSignUpFields;
   final bool requireSignUpConfirmation;
+  final bool socialLoginFirst;
 
   @override
   _LoginCardState createState() => _LoginCardState();
@@ -238,7 +240,7 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
 
     String? error;
 
-    error = await loginProvider.callback!();
+    error = await loginProvider.callback!(context);
 
     // workaround to run after _cardSizeAnimation in parent finished
     // need a cleaner way but currently it works so..
@@ -450,20 +452,10 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
     var buttonProvidersList = <LoginProvider>[];
     var iconProvidersList = <LoginProvider>[];
     for (var loginProvider in auth.loginProviders) {
-      if (loginProvider.button != null) {
-        buttonProvidersList.add(LoginProvider(
-          icon: loginProvider.icon,
-          label: loginProvider.label,
-          button: loginProvider.button,
-          callback: loginProvider.callback,
-        ));
+      if (loginProvider.button != null || loginProvider.customButton != null) {
+        buttonProvidersList.add(loginProvider);
       } else if (loginProvider.icon != null) {
-        iconProvidersList.add(LoginProvider(
-          icon: loginProvider.icon,
-          label: loginProvider.label,
-          button: loginProvider.button,
-          callback: loginProvider.callback,
-        ));
+        iconProvidersList.add(loginProvider);
       }
     }
     if (buttonProvidersList.isNotEmpty) {
@@ -487,18 +479,20 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: buttonProvidersList.map((loginProvider) {
+        Future onPressed() => _loginProviderSubmit(
+              loginProvider: loginProvider,
+            );
         return Padding(
           padding: loginTheme.providerButtonPadding ??
               const EdgeInsets.symmetric(horizontal: 6.0, vertical: 8.0),
           child: ScaleTransition(
             scale: _buttonScaleAnimation,
-            child: SignInButton(
-              loginProvider.button!,
-              onPressed: () => _loginProviderSubmit(
-                loginProvider: loginProvider,
-              ),
-              text: loginProvider.label,
-            ),
+            child: loginProvider.customButton?.builder(context, onPressed) ??
+                SignInButton(
+                  loginProvider.button!,
+                  onPressed: onPressed,
+                  text: loginProvider.label,
+                ),
             // child: loginProvider.button,
           ),
         );
@@ -571,16 +565,12 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
     final cardWidth = min(MediaQuery.of(context).size.width * 0.75, 360.0);
     const cardPadding = 16.0;
     final textFieldWidth = cardWidth - cardPadding * 2;
-    final authForm = Form(
-      key: _formKey,
-      child: Column(
+    List<Widget> children = [
+      Column(
         children: [
+          const SizedBox(height: 10.0),
           Container(
-            padding: const EdgeInsets.only(
-              left: cardPadding,
-              right: cardPadding,
-              top: cardPadding + 10,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: cardPadding),
             width: cardWidth,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -603,46 +593,77 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
             alignment: Alignment.topLeft,
             color: theme.cardTheme.color,
             width: cardWidth,
-            padding: const EdgeInsets.symmetric(
-              horizontal: cardPadding,
-              vertical: 10,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: cardPadding),
             onExpandCompleted: () => _postSwitchAuthController.forward(),
-            child: _buildConfirmPasswordField(textFieldWidth, messages, auth),
-          ),
-          Container(
-            padding: Paddings.fromRBL(cardPadding),
-            width: cardWidth,
             child: Column(
-              children: <Widget>[
-                if (auth.isSignup && auth.termsOfService.isNotEmpty)
-                  ...auth.termsOfService
-                      .map((e) => ScaleTransition(
-                            scale: _buttonScaleAnimation,
-                            child: TermCheckbox(
-                              termOfService: e,
-                            ),
-                          ))
-                      .toList(),
-                !widget.hideForgotPasswordButton
-                    ? _buildForgotPassword(theme, messages)
-                    : SizedBox.fromSize(
-                        size: const Size.fromHeight(16),
-                      ),
-                _buildSubmitButton(theme, messages, auth),
-                !widget.hideSignUpButton
-                    ? _buildSwitchAuthButton(theme, messages, auth, loginTheme)
-                    : SizedBox.fromSize(
-                        size: const Size.fromHeight(10),
-                      ),
-                auth.loginProviders.isNotEmpty && !widget.hideProvidersTitle
-                    ? _buildProvidersTitleFirst(messages)
-                    : Container(),
-                _buildProvidersLogInButton(theme, messages, auth, loginTheme),
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: _buildConfirmPasswordField(textFieldWidth, messages, auth),
+                ),
+                ...auth.termsOfService
+                    .map((e) => ScaleTransition(
+                          scale: _buttonScaleAnimation,
+                          child: TermCheckbox(
+                            termOfService: e,
+                            validation: auth.isSignup,
+                          ),
+                        ))
+                    .toList(),
               ],
             ),
           ),
+          SizedBox(
+            width: cardWidth,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: cardPadding),
+              child: Column(
+                children: [
+                  !widget.hideForgotPasswordButton
+                      ? _buildForgotPassword(theme, messages)
+                      : SizedBox.fromSize(
+                          size: const Size.fromHeight(16),
+                        ),
+                  _buildSubmitButton(theme, messages, auth),
+                  !widget.hideSignUpButton
+                      ? _buildSwitchAuthButton(
+                          theme, messages, auth, loginTheme)
+                      : SizedBox.fromSize(
+                          size: const Size.fromHeight(10),
+                        ),
+                ],
+              ),
+            ),
+          ),
         ],
+      ),
+      SizedBox(
+        width: cardWidth,
+        child: auth.loginProviders.isNotEmpty && !widget.hideProvidersTitle
+            ? _buildProvidersTitleFirst(messages)
+            : Container(),
+      ),
+      Container(
+        padding: EdgeInsets.only(
+            top: widget.socialLoginFirst ? 6.0 : 0.0,
+            left: cardPadding,
+            right: cardPadding),
+        width: cardWidth,
+        child: Column(
+          children: <Widget>[
+            _buildProvidersLogInButton(theme, messages, auth, loginTheme),
+          ],
+        ),
+      ),
+    ];
+    if (widget.socialLoginFirst) children = children.reversed.toList();
+    final authForm = Form(
+      key: _formKey,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: cardPadding),
+        child: Column(
+          children: children,
+        ),
       ),
     );
 
