@@ -13,11 +13,10 @@ import 'package:flutter_login/src/paddings.dart';
 import 'package:flutter_login/src/utils/text_field_utils.dart';
 import 'package:flutter_login/src/widget_helper.dart';
 import 'package:flutter_login/src/widgets/term_of_service_checkbox.dart';
-import 'package:flutter_signin_button/button_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:sign_in_button/sign_in_button.dart';
 
-import '../../../flutter_login.dart';
 import '../animated_button.dart';
 import '../animated_icon.dart';
 import '../animated_text.dart';
@@ -27,9 +26,13 @@ import '../expandable_container.dart';
 import '../fade_in.dart';
 
 part 'additional_signup_card.dart';
+
 part 'login_card.dart';
+
 part 'recover_card.dart';
+
 part 'recover_confirm_card.dart';
+
 part 'signup_confirm_card.dart';
 
 class AuthCard extends StatefulWidget {

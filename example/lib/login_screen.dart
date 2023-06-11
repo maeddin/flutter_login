@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter_login/flutter_login.dart';
-import 'package:flutter_signin_button/button_list.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:sign_in_button/sign_in_button.dart';
 
 import 'constants.dart';
 import 'custom_route.dart';
@@ -62,7 +62,7 @@ class LoginScreen extends StatelessWidget {
       loginAfterSignUp: false,
       loginProviders: [
         LoginProvider(
-          button: Buttons.LinkedIn,
+          button: Buttons.linkedIn,
           label: 'Sign in with LinkedIn',
           callback: () async {
             return null;

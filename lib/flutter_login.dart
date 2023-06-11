@@ -11,7 +11,7 @@ import 'package:flutter_login/src/models/login_user_type.dart';
 import 'package:flutter_login/src/models/term_of_service.dart';
 import 'package:flutter_login/src/models/user_form_field.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_signin_button/button_list.dart';
+import 'package:sign_in_button/sign_in_button.dart';
 
 import 'src/color_helper.dart';
 import 'src/constants.dart';
