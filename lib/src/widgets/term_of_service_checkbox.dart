@@ -21,7 +21,7 @@ class _TermCheckboxState extends State<TermCheckbox> {
   Widget build(BuildContext context) {
     return CheckboxFormField(
       onChanged: (value) => widget.termOfService.setStatus(value!),
-      initialValue: widget.termOfService.initialValue,
+      initialValue: widget.termOfService.getStatus(),
       title: widget.termOfService.linkUrl != null
           ? InkWell(
               onTap: () {
