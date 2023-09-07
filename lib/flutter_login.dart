@@ -270,29 +270,29 @@ class __HeaderState extends State<_Header> {
 }
 
 class FlutterLogin extends StatefulWidget {
-  FlutterLogin(
-      {Key? key,
-      this.onSignup,
-      required this.onLogin,
-      required this.onRecoverPassword,
-      this.title,
+  FlutterLogin({
+    Key? key,
+    this.onSignup,
+    required this.onLogin,
+    required this.onRecoverPassword,
+    this.title,
 
-      /// The [ImageProvider] or asset path [String] for the logo image to be displayed
-      dynamic logo,
-      this.messages,
-      this.theme,
-      this.userValidator,
-      this.passwordValidator,
-      this.onSubmitAnimationCompleted,
-      this.logoTag,
-      this.userType = LoginUserType.email,
-      this.titleTag,
-      this.showDebugButtons = false,
-      this.loginProviders = const <LoginProvider>[],
-      this.hideForgotPasswordButton = false,
-      this.loginAfterSignUp = true,
-      this.footer,
-      this.hideProvidersTitle = false,
+    /// The [ImageProvider] or asset path [String] for the logo image to be displayed
+    dynamic logo,
+    this.messages,
+    this.theme,
+    this.userValidator,
+    this.passwordValidator,
+    this.onSubmitAnimationCompleted,
+    this.logoTag,
+    this.userType = LoginUserType.email,
+    this.titleTag,
+    this.showDebugButtons = false,
+    this.loginProviders = const <LoginProvider>[],
+    this.hideForgotPasswordButton = false,
+    this.loginAfterSignUp = true,
+    this.footer,
+    this.hideProvidersTitle = false,
     this.additionalSignupFields,
     this.disableCustomPageTransformer = false,
     this.navigateBackAfterRecovery = false,
@@ -305,6 +305,8 @@ class FlutterLogin extends StatefulWidget {
     this.initialAuthMode = AuthMode.login,
     this.children,
     this.socialLoginFirst = false,
+    this.showCard = true,
+    this.behindCard = const SizedBox(),
   })  : assert((logo is String?) || (logo is ImageProvider?)),
         logo = logo is String ? AssetImage(logo) : logo,
         super(key: key);
@@ -424,6 +426,10 @@ class FlutterLogin extends StatefulWidget {
   /// Supply custom widgets to the auth stack such as a custom logo widget
   final List<Widget>? children;
 
+  final bool showCard;
+
+  final Widget behindCard;
+
   static String? defaultEmailValidator(value) {
     if (value!.isEmpty || !Regex.email.hasMatch(value)) {
       return 'Invalid email!';
@@ -480,10 +486,23 @@ class _FlutterLoginState extends State<FlutterLogin>
     );
 
     Future.delayed(const Duration(seconds: 1), () {
-      if (mounted) {
+      if (mounted && widget.showCard) {
         _loadingController.forward();
       }
+      if (mounted) _logoController.forward();
     });
+  }
+
+  @override
+  void didUpdateWidget(covariant FlutterLogin oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.showCard != oldWidget.showCard) {
+      if (widget.showCard) {
+        _loadingController.forward();
+      } else {
+        _loadingController.reverse();
+      }
+    }
   }
 
   @override
@@ -785,28 +804,32 @@ class _FlutterLoginState extends State<FlutterLogin>
                 child: Stack(
                   alignment: Alignment.center,
                   children: <Widget>[
+                    Positioned(top: cardTopPosition, child: widget.behindCard),
                     Positioned(
-                      child: AuthCard(
-                        key: authCardKey,
-                        userType: widget.userType,
-                        padding: EdgeInsets.only(top: cardTopPosition),
-                        loadingController: _loadingController,
-                        userValidator: userValidator,
-                        passwordValidator: passwordValidator,
-                        onSubmit: _reverseHeaderAnimation,
-                        onSubmitCompleted: widget.onSubmitAnimationCompleted,
-                        hideSignUpButton: widget.onSignup == null,
-                        hideForgotPasswordButton:
-                            widget.hideForgotPasswordButton,
-                        loginAfterSignUp: widget.loginAfterSignUp,
-                        hideProvidersTitle: widget.hideProvidersTitle,
-                        additionalSignUpFields: widget.additionalSignupFields,
-                        disableCustomPageTransformer:
-                            widget.disableCustomPageTransformer,
-                        loginTheme: widget.theme,
-                        navigateBackAfterRecovery:
-                            widget.navigateBackAfterRecovery,
-                        socialLoginFirst: widget.socialLoginFirst,
+                      child: IgnorePointer(
+                        ignoring: !widget.showCard,
+                        child: AuthCard(
+                          key: authCardKey,
+                          userType: widget.userType,
+                          padding: EdgeInsets.only(top: cardTopPosition),
+                          loadingController: _loadingController,
+                          userValidator: userValidator,
+                          passwordValidator: passwordValidator,
+                          onSubmit: _reverseHeaderAnimation,
+                          onSubmitCompleted: widget.onSubmitAnimationCompleted,
+                          hideSignUpButton: widget.onSignup == null,
+                          hideForgotPasswordButton:
+                              widget.hideForgotPasswordButton,
+                          loginAfterSignUp: widget.loginAfterSignUp,
+                          hideProvidersTitle: widget.hideProvidersTitle,
+                          additionalSignUpFields: widget.additionalSignupFields,
+                          disableCustomPageTransformer:
+                              widget.disableCustomPageTransformer,
+                          loginTheme: widget.theme,
+                          navigateBackAfterRecovery:
+                              widget.navigateBackAfterRecovery,
+                          socialLoginFirst: widget.socialLoginFirst,
+                        ),
                       ),
                     ),
                     Positioned(
