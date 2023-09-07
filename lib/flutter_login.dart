@@ -840,7 +840,10 @@ class _FlutterLoginState extends State<FlutterLogin>
                         child: Align(
                             alignment: Alignment.bottomCenter,
                             child: footerWidget)),
-                    ...?widget.children,
+                    ...?widget.children?.map((e) => Positioned(
+                        top: cardTopPosition - headerHeight - headerMargin,
+                        height: headerHeight,
+                        child: e)),
                   ],
                 ),
               ),
