@@ -292,6 +292,7 @@ class FlutterLogin extends StatefulWidget {
     this.hideForgotPasswordButton = false,
     this.loginAfterSignUp = true,
     this.footer,
+    this.footerWidget,
     this.hideProvidersTitle = false,
     this.additionalSignupFields,
     this.disableCustomPageTransformer = false,
@@ -383,6 +384,8 @@ class FlutterLogin extends StatefulWidget {
 
   /// Optional footer text for example a copyright notice
   final String? footer;
+
+  final Widget? footerWidget;
 
   /// Hide the title above the login providers. If no providers are set this is uneffective
   final bool hideProvidersTitle;
@@ -749,8 +752,8 @@ class _FlutterLoginState extends State<FlutterLogin>
     final passwordValidator =
         widget.passwordValidator ?? FlutterLogin.defaultPasswordValidator;
 
-    Widget footerWidget = const SizedBox();
-    if (widget.footer != null) {
+    Widget footerWidget = widget.footerWidget ?? const SizedBox();
+    if (widget.footerWidget == null && widget.footer != null) {
       footerWidget = Padding(
         padding: EdgeInsets.only(bottom: loginTheme.footerBottomPadding),
         child: Text(
